@@ -16,18 +16,9 @@ h1 {
   color: #00e5ff;
 }
 
-/* CALENDAR */
 #calendar {
   background: white;
   color: black;
-  padding: 10px;
-  border-radius: 10px;
-}
-
-/* STATS */
-.stats {
-  margin-top: 20px;
-  background: #1e293b;
   padding: 10px;
   border-radius: 10px;
 }
