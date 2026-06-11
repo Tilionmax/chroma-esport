@@ -1,70 +1,68 @@
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #0f172a;
-  color: white;
-}
+let calendar;
+let selectedDate = null;
 
-.container {
-  max-width: 1000px;
-  margin: auto;
-  padding: 20px;
-}
+document.addEventListener("DOMContentLoaded", function () {
 
-h1 {
-  text-align: center;
-  color: #00e5ff;
-}
+  const calendarEl = document.getElementById("calendar");
 
-/* CALENDAR */
-#calendar {
-  background: white;
-  color: black;
-  padding: 10px;
-  border-radius: 10px;
-}
+  calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: "dayGridMonth",
+    selectable: true,
 
-/* STATS */
-.stats {
-  margin-top: 20px;
-  background: #1e293b;
-  padding: 10px;
-  border-radius: 10px;
-}
+    dateClick: function(info) {
+      selectedDate = info.dateStr;
+      openModal();
+
+      document.getElementById("stats").innerText =
+        "Date sélectionnée : " + selectedDate;
+    },
+
+    events: []
+  });
+
+  calendar.render();
+
+  // BUTTONS
+  document.getElementById("saveBtn").addEventListener("click", saveEvent);
+  document.getElementById("closeBtn").addEventListener("click", closeModal);
+
+  console.log("JS chargé ✔");
+});
 
 /* MODAL */
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
+function openModal() {
+  document.getElementById("modal").classList.remove("hidden");
 }
 
-.modal-content {
-  background: #1e293b;
-  padding: 20px;
-  border-radius: 10px;
-  width: 300px;
+function closeModal() {
+  document.getElementById("modal").classList.add("hidden");
 }
 
-/* CACHE */
-.hidden {
-  display: none !important;
+/* SAVE EVENT */
+function saveEvent() {
+  const title = document.getElementById("title").value;
+
+  if (!title) {
+    alert("Nom requis");
+    return;
+  }
+
+  calendar.addEvent({
+    title: title,
+    start: selectedDate
+  });
+
+  closeModal();
+  document.getElementById("title").value = "";
 }
 
-input {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-}
+/* CLICK OUTSIDE TO CLOSE */
+document.addEventListener("click", function (e) {
+  const modal = document.getElementById("modal");
 
-button {
-  padding: 10px;
-  margin: 5px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
+  if (modal.classList.contains("hidden")) return;
+
+  if (e.target === modal) {
+    closeModal();
+  }
+});
