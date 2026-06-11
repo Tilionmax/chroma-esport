@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Planning V4 Firebase</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+</head>
+
+<body>
+
+<h1>📅 Planning Équipe V4</h1>
+
+<div id="calendar"></div>
+
+<!-- MODAL -->
+<div id="modal" class="modal hidden">
+  <div class="modal-content">
+
+    <h2>Créer entraînement</h2>
+
+    <input id="title" placeholder="Nom séance">
+
+    <h3>👥 Joueurs présents</h3>
+    <div id="players"></div>
+
+    <button onclick="saveEvent()">Créer</button>
+    <button onclick="closeModal()">Annuler</button>
+
+  </div>
+</div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
