@@ -113,7 +113,12 @@ function renderWeek() {
   container.innerHTML = "";
 
   document.getElementById("weekRange").textContent =
-    `📅 Semaine du ${days[0].toISOString().split("T")[0]} → ${days[6].toISOString().split("T")[0]}`;
+    const formatFR = (date) => {
+      return date.toLocaleDateString("fr-FR");
+};
+
+  document.getElementById("weekRange").textContent =
+  `📅 Semaine du ${formatFR(days[0])} → ${formatFR(days[6])}`;
 
   days.forEach(d => {
 
