@@ -26,7 +26,9 @@ let calendar;
 let selectedDate = null;
 let selectedDay = null;
 let selectedEvent = null;
-let currentPlayer = "";
+
+/* Pseudo sauvegardé */
+let currentPlayer = localStorage.getItem("playerName") || "";
 
 /* INIT */
 document.addEventListener("DOMContentLoaded", async () => {
@@ -100,6 +102,10 @@ renderPlayersForDay();
 
   document.getElementById("updateBtn").addEventListener("click", updateEvent);
   document.getElementById("deleteBtn").addEventListener("click", deleteEvent);
+
+  document
+    .getElementById("changePlayerBtn")
+    .addEventListener("click", resetPlayer);
 });
 
 /* LOAD */
@@ -139,6 +145,9 @@ async function saveAvailability() {
 
   currentPlayer = player;
 
+/* Sauvegarde navigateur */
+localStorage.setItem("playerName", player);
+  
   await addDoc(collection(db, "availabilities"), {
     player,
     date: selectedDate,
@@ -253,6 +262,9 @@ async function renderPlayersForDay() {
 
 /* MODALS */
 function openAvailModal() {
+
+  document.getElementById("playerName").value = currentPlayer;
+
   document.getElementById("availModal").classList.remove("hidden");
 }
 
