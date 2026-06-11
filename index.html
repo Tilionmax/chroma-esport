@@ -2,10 +2,11 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Planning Équipe v3</title>
+  <title>Chroma Esport - Planning</title>
 
   <link rel="stylesheet" href="style.css">
 
+  <!-- FullCalendar -->
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 </head>
@@ -13,13 +14,13 @@
 <body>
 
 <div class="container">
-  <h1>📅 Planning équipe v3</h1>
+  <h1>📅 Planning Chroma Esport</h1>
 
   <div id="calendar"></div>
 
   <div class="stats">
-    <h3>📊 Statistiques présence</h3>
-    <div id="stats"></div>
+    <h3>📊 Infos événement</h3>
+    <div id="stats">Clique sur un jour</div>
   </div>
 </div>
 
@@ -27,14 +28,9 @@
 <div id="modal" class="modal hidden">
   <div class="modal-content">
 
-    <h2>➕ Créer entraînement</h2>
+    <h2>➕ Créer un événement</h2>
 
-    <input id="title" placeholder="Nom séance">
-
-    <h3>🧑 Disponibilité joueurs</h3>
-    <p class="hint">Coche ceux disponibles</p>
-
-    <div id="players"></div>
+    <input id="title" placeholder="Nom de la session">
 
     <button id="saveBtn">Créer</button>
     <button id="closeBtn">Annuler</button>
@@ -42,6 +38,7 @@
   </div>
 </div>
 
-<script type="module" src="script.js"></script>
+<script src="script.js"></script>
+
 </body>
 </html>
