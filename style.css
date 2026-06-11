@@ -169,10 +169,10 @@ button {
    
 .edit-btn
  {
-    background: #010c2c;
-    border: none;
-    cursor: pointer;
-    color: #3c9195;
-    font-weight: bold;
-    font-size: 16px;
+    background: #010c2c !important;
+    border: none !important;
+    cursor: pointer !important;
+    color: #3c9195 !important;
+    font-weight: bold !important;
+    font-size: 16px !important;
 }
