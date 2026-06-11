@@ -148,3 +148,14 @@ button {
   margin-bottom: 10px;
   color: #00e5ff;
 }
+#currentPlayerDisplay {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #3c9195;
+  background: rgba(60, 145, 149, 0.1);
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
