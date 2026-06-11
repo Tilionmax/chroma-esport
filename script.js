@@ -88,23 +88,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 /* ================= UI USER ================= */
 function updatePlayerUI() {
-  const display = document.getElementById("currentPlayerDisplay");
+  const text = document.getElementById("playerText");
   const input = document.getElementById("playerName");
 
   if (!currentPlayer) {
-    if (display) display.textContent = "";
+    if (text) text.textContent = "";
     return;
   }
 
-  if (display) {
-    display.textContent = "Connected as: " + currentPlayer;
+  if (text) {
+    text.textContent = "Connected as: " + currentPlayer;
   }
 
   if (input) {
     input.value = currentPlayer;
   }
 }
-
 /* ================= WEEK ================= */
 function renderWeek() {
 
@@ -299,3 +298,16 @@ function closeEditModal() {
   document.getElementById("editModal").classList.add("hidden");
   selectedEvent = null;
 }
+
+/* ================= btn change name ================= */
+document.getElementById("changePlayerBtn").addEventListener("click", () => {
+
+  const newName = prompt("Change your username:");
+
+  if (!newName) return;
+
+  currentPlayer = newName;
+  localStorage.setItem("playerName", newName);
+
+  updatePlayerUI();
+});
