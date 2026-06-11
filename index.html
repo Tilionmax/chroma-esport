@@ -18,8 +18,8 @@
   <div id="calendar"></div>
 </div>
 
-<!-- MODAL DISPO -->
-<div id="availModal" class="modal hidden" onclick="backdropClose(event)">
+<!-- MODAL AJOUT -->
+<div id="availModal" class="modal hidden" onclick="closeAddBackdrop(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
 
     <h3>Ajouter disponibilité</h3>
@@ -30,6 +30,24 @@
 
     <button id="saveAvailBtn">Valider</button>
     <button id="closeAvailBtn">Fermer</button>
+
+  </div>
+</div>
+
+<!-- MODAL EDIT -->
+<div id="editModal" class="modal hidden" onclick="closeEditBackdrop(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+
+    <h3>Gérer disponibilité</h3>
+
+    <p id="editInfo"></p>
+
+    <input id="editStart" type="time">
+    <input id="editEnd" type="time">
+
+    <button id="updateBtn">Modifier</button>
+    <button id="deleteBtn">Supprimer</button>
+    <button onclick="closeEditModal()">Fermer</button>
 
   </div>
 </div>
