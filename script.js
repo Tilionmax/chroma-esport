@@ -50,3 +50,13 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("saveBtn").addEventListener("click", saveEvent);
   document.getElementById("closeBtn").addEventListener("click", closeModal);
 });
+document.addEventListener("click", function (e) {
+  const modal = document.getElementById("modal");
+  const content = document.querySelector(".modal-content");
+
+  if (modal.classList.contains("hidden")) return;
+
+  if (e.target === modal) {
+    closeModal();
+  }
+});
