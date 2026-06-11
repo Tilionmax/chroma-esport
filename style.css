@@ -162,6 +162,5 @@ button {
     opacity: 1 !important;
 }
 .fc .fc-button-primary:focus
-Specificity: (0,3,0)
  {
-    box-shadow: rgb(76 91 106 / 0%) 0px 0px 0px 0.2rem;
+    box-shadow: rgb(76 91 106 / 0%) 0px 0px 0px 0.2rem !important;
