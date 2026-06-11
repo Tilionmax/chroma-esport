@@ -16,19 +16,25 @@
   <h1>Overwatch Team Schedule</h1>
 
   <div id="calendar"></div>
+
+  <!-- 🟢 LISTE JOUEURS -->
+  <div class="stats">
+    <h3>🟢 Joueurs disponibles</h3>
+    <div id="playersList">Clique sur un jour</div>
+  </div>
 </div>
 
 <!-- MODAL AJOUT -->
 <div id="availModal" class="modal hidden" onclick="closeAddBackdrop(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
 
-    <h3>Add your availability</h3>
+    <h3>Add availability</h3>
 
     <input id="playerName" placeholder="Username">
     <input id="startHour" placeholder="HH:MM">
     <input id="endHour" placeholder="HH:MM">
 
-    <button id="saveAvailBtn">Confirm</button>
+    <button id="saveAvailBtn">Save</button>
     <button id="closeAvailBtn">Close</button>
 
   </div>
