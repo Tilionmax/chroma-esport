@@ -1,72 +1,61 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Chroma Esport Dashboard</title>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+}
 
-  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+.container {
+  max-width: 1400px;
+  margin: auto;
+  padding: 20px;
+}
 
-  <link rel="stylesheet" href="style.css">
-</head>
+h1 {
+  text-align: center;
+  color: #00e5ff;
+}
 
-<body>
+#calendar {
+  background: white;
+  color: black;
+  padding: 15px;
+  border-radius: 10px;
+  min-height: 850px;
+}
 
-<div class="app">
+/* MODAL */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
 
-  <!-- SIDEBAR STYLE DISCORD -->
-  <div class="sidebar">
-    <h2>⚡ Chroma</h2>
-    <p class="nav">📅 Planning</p>
-    <p class="nav">🟢 Disponibilités</p>
-  </div>
+.modal-content {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 10px;
+  width: 320px;
+}
 
-  <!-- MAIN -->
-  <div class="main">
+.hidden {
+  display: none;
+}
 
-    <h1>Planning Équipe Esport</h1>
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+}
 
-    <div id="calendar"></div>
-
-  </div>
-</div>
-
-<!-- MODAL AJOUT -->
-<div id="availModal" class="modal hidden" onclick="closeAddBackdrop(event)">
-  <div class="modal-content" onclick="event.stopPropagation()">
-
-    <h3>Ajouter disponibilité</h3>
-
-    <input id="playerName" placeholder="Pseudo">
-
-    <input id="startHour" placeholder="HH:MM" inputmode="numeric">
-    <input id="endHour" placeholder="HH:MM" inputmode="numeric">
-
-    <button id="saveAvailBtn">Valider</button>
-    <button id="closeAvailBtn">Fermer</button>
-
-  </div>
-</div>
-
-<!-- MODAL EDIT -->
-<div id="editModal" class="modal hidden" onclick="closeEditBackdrop(event)">
-  <div class="modal-content" onclick="event.stopPropagation()">
-
-    <h3>Gestion disponibilité</h3>
-
-    <p id="editInfo"></p>
-
-    <input id="editStart" placeholder="HH:MM">
-    <input id="editEnd" placeholder="HH:MM">
-
-    <button id="updateBtn">Modifier</button>
-    <button id="deleteBtn">Supprimer</button>
-    <button onclick="closeEditModal()">Fermer</button>
-
-  </div>
-</div>
-
-<script type="module" src="script.js"></script>
-
-</body>
-</html>
+button {
+  padding: 10px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
