@@ -8,7 +8,6 @@ import {
   doc
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-/* FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyBVhYA-HBtN3rG8q0Aj0EfhCsEJ3Nz8jPA",
   authDomain: "chroma-esport.firebaseapp.com",
@@ -22,13 +21,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* VARIABLES */
 let calendar;
 let selectedDate = null;
 let selectedEvent = null;
 let currentPlayer = "";
 
-/* INIT */
 document.addEventListener("DOMContentLoaded", async () => {
 
   const calendarEl = document.getElementById("calendar");
@@ -39,7 +36,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     initialView: "dayGridMonth",
     events: events,
 
-    /* affichage propre heure */
     eventTimeFormat: {
       hour: '2-digit',
       minute: '2-digit',
@@ -63,21 +59,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("updateBtn").addEventListener("click", updateEvent);
   document.getElementById("deleteBtn").addEventListener("click", deleteEvent);
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      closeAvailModal();
-      closeEditModal();
-    }
-  });
 });
 
-/* VALID TIME */
-function isValidTime(time) {
-  return /^([01]\d|2[0-3]):([0-5]\d)$/.test(time);
-}
-
-/* LOAD FIRESTORE */
+/* LOAD */
 async function loadAll() {
   const snapshot = await getDocs(collection(db, "availabilities"));
 
@@ -88,7 +72,7 @@ async function loadAll() {
 
     events.push({
       id: docSnap.id,
-      title: `🟢 ${d.player} (${d.start} - ${d.end})`,
+      title: `🟢 ${d.player} ${d.start}→${d.end}`,
       start: d.date,
       extendedProps: {
         player: d.player,
@@ -107,15 +91,7 @@ async function saveAvailability() {
   const start = document.getElementById("startHour").value;
   const end = document.getElementById("endHour").value;
 
-  if (!player || !start || !end) {
-    alert("Remplis tout");
-    return;
-  }
-
-  if (!isValidTime(start) || !isValidTime(end)) {
-    alert("Format HH:MM requis (ex: 15:30)");
-    return;
-  }
+  if (!player || !start || !end) return alert("Remplis tout");
 
   currentPlayer = player;
 
@@ -130,28 +106,18 @@ async function saveAvailability() {
   closeAvailModal();
 }
 
-/* OPEN EDIT */
+/* EDIT */
 function openEditModal(event) {
 
-  const eventPlayer = event.extendedProps.player;
+  if (!currentPlayer) return alert("Entre ton pseudo");
 
-  if (!currentPlayer) {
-    alert("Entre ton pseudo d'abord");
-    return;
-  }
-
-  if (eventPlayer !== currentPlayer) {
-    alert("Tu ne peux modifier que tes disponibilités");
-    return;
-  }
+  if (event.extendedProps.player !== currentPlayer)
+    return alert("Ce n'est pas ta dispo");
 
   selectedEvent = event;
 
   document.getElementById("editInfo").innerText =
-    `${eventPlayer} • ${event.extendedProps.start} → ${event.extendedProps.end}`;
-
-  document.getElementById("editStart").value = event.extendedProps.start;
-  document.getElementById("editEnd").value = event.extendedProps.end;
+    `${event.extendedProps.player} • ${event.extendedProps.start} → ${event.extendedProps.end}`;
 
   document.getElementById("editModal").classList.remove("hidden");
 }
@@ -161,11 +127,6 @@ async function updateEvent() {
 
   const start = document.getElementById("editStart").value;
   const end = document.getElementById("editEnd").value;
-
-  if (!isValidTime(start) || !isValidTime(end)) {
-    alert("HH:MM requis");
-    return;
-  }
 
   await deleteDoc(doc(db, "availabilities", selectedEvent.id));
 
@@ -183,8 +144,6 @@ async function updateEvent() {
 /* DELETE */
 async function deleteEvent() {
 
-  if (!selectedEvent) return;
-
   await deleteDoc(doc(db, "availabilities", selectedEvent.id));
 
   selectedEvent.remove();
@@ -197,7 +156,7 @@ async function refreshCalendar() {
   calendar.removeAllEvents();
 
   const refreshed = await loadAll();
-  refreshed.forEach(ev => calendar.addEvent(ev));
+  refreshed.forEach(e => calendar.addEvent(e));
 }
 
 /* MODALS */
@@ -215,10 +174,5 @@ function closeEditModal() {
 }
 
 /* BACKDROP */
-window.closeAddBackdrop = function(e) {
-  closeAvailModal();
-};
-
-window.closeEditBackdrop = function(e) {
-  closeEditModal();
-};
+window.closeAddBackdrop = () => closeAvailModal();
+window.closeEditBackdrop = () => closeEditModal();
