@@ -39,6 +39,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     initialView: "dayGridMonth",
     events: events,
 
+    /* 🔥 HEURES PROPRES */
+    eventTimeFormat: {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    },
+
     dateClick: (info) => {
       selectedDate = info.dateStr;
       openAvailModal();
@@ -65,7 +72,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 });
 
-/* LOAD */
+/* LOAD FIRESTORE */
 async function loadAll() {
   const snapshot = await getDocs(collection(db, "availabilities"));
 
@@ -76,7 +83,7 @@ async function loadAll() {
 
     events.push({
       id: docSnap.id,
-      title: `🟢 ${d.player} (${d.start}-${d.end})`,
+      title: `🟢 ${d.player}`,
       start: d.date,
       extendedProps: {
         player: d.player,
@@ -113,7 +120,7 @@ async function saveAvailability() {
   closeAvailModal();
 }
 
-/* OPEN EDIT */
+/* OPEN EDIT POPUP */
 function openEditModal(event) {
 
   const eventPlayer = event.extendedProps.player;
@@ -124,14 +131,14 @@ function openEditModal(event) {
   }
 
   if (eventPlayer !== currentPlayer) {
-    alert("Tu ne peux gérer que tes disponibilités");
+    alert("Tu ne peux modifier que tes disponibilités");
     return;
   }
 
   selectedEvent = event;
 
   document.getElementById("editInfo").innerText =
-    event.title;
+    `${event.extendedProps.player} - ${event.extendedProps.start} → ${event.extendedProps.end}`;
 
   document.getElementById("editModal").classList.remove("hidden");
 }
@@ -194,6 +201,7 @@ function closeEditModal() {
   selectedEvent = null;
 }
 
+/* BACKDROP CLICK */
 window.closeAddBackdrop = function(e) {
   closeAvailModal();
 };
