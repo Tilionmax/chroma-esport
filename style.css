@@ -147,7 +147,7 @@ button {
   color: #3c9195;
 }
 
- fc-button-group{
+ .fc .fc-button{
     background-color: #3c9195;
     border-color: #3c9195;
     color: #000000;
