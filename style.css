@@ -32,7 +32,7 @@ h1 {
   pointer-events: none;
 }
 
-/* jour sélectionné */
+/* jour sélectionné calendrier */
 .selected-day {
   background-color: #00e5ff !important;
 }
@@ -40,7 +40,6 @@ h1 {
 /* jour actuel */
 .fc-day-today {
   background-color: #3c9195 !important;
-  color: white !important;
 }
 
 /* SEMAINE */
@@ -69,7 +68,14 @@ h1 {
   background: #020f2a;
   padding: 8px 12px;
   border-radius: 6px;
+  cursor: pointer;
   font-size: 13px;
+}
+
+.week-day.active {
+  background: #00e5ff;
+  color: black;
+  font-weight: bold;
 }
 
 /* PLAYERS */
