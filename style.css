@@ -25,25 +25,7 @@ h1 {
   min-height: 800px;
 }
 
-/* jours passés */
-.past-day {
-  background: #424141 !important;
-  opacity: 0.0;
-  pointer-events: none;
-}
-
-/* sélection jour */
-.selected-day {
-  background-color: #00e5ff !important;
-}
-
-/* jour actuel */
-.fc-day-today {
-  background-color: #3c9195 !important;
-  opacity: 0.8 !important;
-}
-
-/* SEMAINE */
+/* WEEK */
 .week-bar {
   margin-top: 15px;
   background: #0b1a3a;
@@ -61,7 +43,6 @@ h1 {
 #weekDays {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
   justify-content: center;
 }
 
@@ -75,7 +56,6 @@ h1 {
 .week-day.active {
   background: #00e5ff;
   color: black;
-  font-weight: bold;
 }
 
 /* PLAYERS */
@@ -104,10 +84,6 @@ h1 {
   font-weight: bold;
 }
 
-.player-time {
-  color: white;
-}
-
 /* MODAL */
 .modal {
   position: fixed;
@@ -124,12 +100,6 @@ h1 {
   padding: 20px;
   border-radius: 10px;
   width: 320px;
-
-}
-
-input::placeholder {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.6);
 }
 
 .hidden {
@@ -138,13 +108,9 @@ input::placeholder {
 
 input {
   width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-
   padding: 10px;
   margin: 10px 0;
-
-  font-size: 14px;
+  box-sizing: border-box;
 }
 
 button {
@@ -155,21 +121,29 @@ button {
   cursor: pointer;
 }
 
+/* USER DISPLAY */
 #currentPlayerDisplay {
   text-align: center;
   margin-bottom: 10px;
-  font-size: 20px;
-  font-weight: 600;
+
   color: #010c2c;
   background: #3c9195;
-  display: block;
+
+  font-weight: 600;
+  font-size: 18px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
   padding: 6px 12px;
   border-radius: 8px;
 }
+
 .edit-btn {
   background: transparent;
   border: none;
   cursor: pointer;
-
   font-size: 16px;
 }
