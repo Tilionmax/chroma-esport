@@ -46,5 +46,7 @@ function saveEvent() {
 }
 
 // BUTTONS (IMPORTANT)
-document.getElementById("saveBtn").addEventListener("click", saveEvent);
-document.getElementById("closeBtn").addEventListener("click", closeModal);
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("saveBtn").addEventListener("click", saveEvent);
+  document.getElementById("closeBtn").addEventListener("click", closeModal);
+});
