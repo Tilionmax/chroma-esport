@@ -32,7 +32,7 @@ h1 {
   pointer-events: none;
 }
 
-/* jour sélectionné calendrier */
+/* sélection */
 .selected-day {
   background-color: #00e5ff !important;
 }
@@ -69,7 +69,6 @@ h1 {
   padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 13px;
 }
 
 .week-day.active {
