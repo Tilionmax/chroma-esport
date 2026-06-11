@@ -1,103 +1,74 @@
-import { db, collection, addDoc, onSnapshot } from "./firebase.js";
-
-// 👥 joueurs
-const players = ["Joueur 1", "Joueur 2", "Joueur 3", "Joueur 4"];
-
-let selectedDate = null;
-let calendar;
-
-// 🔔 DISCORD WEBHOOK
-const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/XXX";
-
-document.addEventListener("DOMContentLoaded", () => {
-
-  calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
-    initialView: "dayGridMonth",
-    dateClick: (info) => openModal(info.dateStr),
-    events: []
-  });
-
-  calendar.render();
-
-  // 🔥 LIVE FIRESTORE
-  onSnapshot(collection(db, "events"), (snapshot) => {
-
-    const events = [];
-
-    snapshot.forEach(doc => {
-      events.push(doc.data());
-    });
-
-    calendar.removeAllEvents();
-    calendar.addEventSource(events);
-  });
-});
-
-// 📌 OPEN MODAL
-function openModal(date) {
-  selectedDate = date;
-
-  document.getElementById("modal").classList.remove("hidden");
-
-  const container = document.getElementById("players");
-  container.innerHTML = "";
-
-  players.forEach(name => {
-    container.innerHTML += `
-      <div class="player">
-        <span>${name}</span>
-        <input type="checkbox" value="${name}">
-      </div>
-    `;
-  });
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
 }
 
-// ❌ CLOSE
-function closeModal() {
-  document.getElementById("modal").classList.add("hidden");
+.container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 20px;
 }
 
-// 💾 SAVE EVENT FIREBASE
-async function saveEvent() {
-
-  const title = document.getElementById("title").value;
-
-  const checked = [...document.querySelectorAll("#players input:checked")]
-    .map(e => e.value);
-
-  if (!title || !selectedDate) return;
-
-  const event = {
-    title: `${title} (${checked.length} joueurs)`,
-    start: selectedDate,
-    allDay: true,
-    players: checked,
-    color: getColor(checked.length)
-  };
-
-  // ☁️ FIRESTORE
-  await addDoc(collection(db, "events"), event);
-
-  // 🔔 DISCORD NOTIF
-  sendDiscord(event);
-
-  closeModal();
+h1 {
+  text-align: center;
 }
 
-// 🎨 COLOR SYSTEM
-function getColor(count) {
-  if (count >= 3) return "green";
-  if (count >= 2) return "orange";
-  return "red";
+#calendar {
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  color: black;
 }
 
-// 🔔 DISCORD
-function sendDiscord(event) {
-  fetch(DISCORD_WEBHOOK, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      content: `📅 Nouveau entraînement : **${event.title}** le ${event.start}`
-    })
-  });
+/* MODAL */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 10px;
+  width: 380px;
+}
+
+.hidden {
+  display: none;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+button {
+  margin: 5px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.player {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0;
+  padding: 5px;
+  background: #334155;
+  border-radius: 5px;
+}
+
+.stats {
+  margin-top: 20px;
+  background: #1e293b;
+  padding: 10px;
+  border-radius: 10px;
 }
