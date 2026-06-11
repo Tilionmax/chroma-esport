@@ -1,27 +1,66 @@
 body {
   margin: 0;
   font-family: Arial;
-  background: #0f172a;
+  background: #0b0f19;
   color: white;
 }
 
-.container {
-  max-width: 1400px;
-  margin: auto;
+/* APP LAYOUT */
+.app {
+  display: flex;
+  height: 100vh;
+}
+
+/* SIDEBAR DISCORD */
+.sidebar {
+  width: 220px;
+  background: #111827;
+  padding: 20px;
+  border-right: 1px solid #1f2937;
+}
+
+.sidebar h2 {
+  color: #5865f2;
+}
+
+.nav {
+  padding: 10px;
+  margin-top: 10px;
+  background: #1f2937;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.nav:hover {
+  background: #2b2f3a;
+}
+
+/* MAIN */
+.main {
+  flex: 1;
   padding: 20px;
 }
 
 h1 {
-  text-align: center;
-  color: #00e5ff;
+  color: #ffffff;
 }
 
+/* CALENDAR */
 #calendar {
-  background: white;
+  background: #ffffff;
   color: black;
   padding: 15px;
   border-radius: 10px;
   min-height: 850px;
+}
+
+/* EVENTS STYLE DISCORD */
+.fc-event {
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 4px !important;
+  background: #5865f2 !important;
+  color: white !important;
 }
 
 /* MODAL */
@@ -36,7 +75,7 @@ h1 {
 }
 
 .modal-content {
-  background: #1e293b;
+  background: #111827;
   padding: 20px;
   border-radius: 10px;
   width: 320px;
@@ -50,12 +89,18 @@ input {
   width: 100%;
   padding: 10px;
   margin: 10px 0;
+  background: #1f2937;
+  color: white;
+  border: none;
+  border-radius: 6px;
 }
 
 button {
   padding: 10px;
   margin: 5px;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
+  background: #5865f2;
+  color: white;
 }
