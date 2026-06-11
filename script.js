@@ -10,13 +10,12 @@ import {
 
 /* FIREBASE */
 const firebaseConfig = {
-  apiKey: "AIzaSyBVhYA-HBtN3rG8q0Aj0EfhCsEJ3Nz8jPA",
+  apiKey: "TON_API_KEY",
   authDomain: "chroma-esport.firebaseapp.com",
-  databaseURL: "https://chroma-esport-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "chroma-esport",
-  storageBucket: "chroma-esport.firebasestorage.app",
-  messagingSenderId: "555749328122",
-  appId: "1:555749328122:web:5765da259633ef047e3543"
+  storageBucket: "chroma-esport.appspot.com",
+  messagingSenderId: "TON_ID",
+  appId: "TON_APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -25,6 +24,7 @@ const db = getFirestore(app);
 /* VARIABLES */
 let calendar;
 let selectedDate = null;
+let selectedDay = null;
 let selectedEvent = null;
 let currentPlayer = "";
 
@@ -39,7 +39,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     initialView: "dayGridMonth",
     events: events,
 
-    /* 🔥 INTERDIT DATES PASSÉES */
     validRange: {
       start: new Date().toISOString().split("T")[0]
     },
@@ -50,7 +49,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       hour12: false
     },
 
-    /* 🩶 GRISER JOURS PASSÉS */
     dayCellClassNames: (arg) => {
       const today = new Date();
       today.setHours(0,0,0,0);
@@ -74,7 +72,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       selectedDate = info.dateStr;
+      selectedDay = info.dateStr;
+
       openAvailModal();
+      renderPlayersForDay();
     },
 
     eventClick: (info) => {
@@ -136,6 +137,7 @@ async function saveAvailability() {
   });
 
   refreshCalendar();
+  renderPlayersForDay();
   closeAvailModal();
 }
 
@@ -176,6 +178,7 @@ async function updateEvent() {
   });
 
   refreshCalendar();
+  renderPlayersForDay();
   closeEditModal();
 }
 
@@ -186,6 +189,7 @@ async function deleteEvent() {
 
   selectedEvent.remove();
 
+  renderPlayersForDay();
   closeEditModal();
 }
 
@@ -195,6 +199,46 @@ async function refreshCalendar() {
 
   const refreshed = await loadAll();
   refreshed.forEach(ev => calendar.addEvent(ev));
+}
+
+/* LISTE JOUEURS */
+async function renderPlayersForDay() {
+
+  const list = document.getElementById("playersList");
+  list.innerHTML = "Chargement...";
+
+  const snapshot = await getDocs(collection(db, "availabilities"));
+
+  let players = [];
+
+  snapshot.forEach(docSnap => {
+    const d = docSnap.data();
+
+    if (d.date === selectedDay) {
+      players.push(d);
+    }
+  });
+
+  if (players.length === 0) {
+    list.innerHTML = "Aucun joueur disponible";
+    return;
+  }
+
+  players.sort((a, b) => a.start.localeCompare(b.start));
+
+  list.innerHTML = "";
+
+  players.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "player-card";
+
+    div.innerHTML = `
+      <span class="player-name">🟢 ${p.player}</span>
+      <span class="player-time">${p.start} → ${p.end}</span>
+    `;
+
+    list.appendChild(div);
+  });
 }
 
 /* MODALS */
@@ -211,6 +255,5 @@ function closeEditModal() {
   selectedEvent = null;
 }
 
-/* BACKDROP */
 window.closeAddBackdrop = () => closeAvailModal();
 window.closeEditBackdrop = () => closeEditModal();
