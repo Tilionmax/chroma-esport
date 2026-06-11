@@ -166,5 +166,5 @@ button {
     box-shadow: rgb(76 91 106 / 0%) 0px 0px 0px 0.2rem !important;
 
 :root {   
-   --fc-neutral-text-color: grey;
+   --fc-neutral-bg-color: hsl(0deg 0% 0% / 51%);
 }
