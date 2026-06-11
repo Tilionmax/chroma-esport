@@ -181,6 +181,8 @@ async function saveAvailability() {
 
   refreshCalendar();
   renderPlayersForDay();
+
+  // 🔥 IMPORTANT : fermer popup après save
   closeAvailModal();
 }
 
