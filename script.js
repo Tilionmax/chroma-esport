@@ -3,9 +3,7 @@ import {
   getFirestore,
   collection,
   addDoc,
-  getDocs,
-  deleteDoc,
-  doc
+  getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 /* 🔥 FIREBASE CONFIG */
@@ -24,111 +22,104 @@ const db = getFirestore(app);
 /* VARIABLES */
 let calendar;
 let selectedDate = null;
-let selectedEvent = null;
+let selectedAvailDate = null;
 
 /* INIT */
 document.addEventListener("DOMContentLoaded", async function () {
 
   const calendarEl = document.getElementById("calendar");
 
-  const events = await loadEvents();
+  const events = await loadAll();
 
   calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: "dayGridMonth",
     selectable: true,
     events: events,
 
+    /* 📅 CLICK JOUR = DISPONIBILITÉ */
     dateClick: function(info) {
-      selectedDate = info.dateStr;
-      openModal();
-    },
-
-    eventClick: function(info) {
-      selectedEvent = info.event;
-
-      document.getElementById("eventTitle").innerText =
-        "📌 " + info.event.title;
-
-      openEventModal();
-    },
-
-    eventDidMount: function(info) {
-      if (info.event.extendedProps.dispo) {
-        info.el.title =
-          "Dispo: " + info.event.extendedProps.dispo.join(", ");
-      }
+      selectedAvailDate = info.dateStr;
+      openAvailModal();
     }
   });
 
   calendar.render();
 
-  /* BUTTONS CREATE */
+  /* EVENTS */
   document.getElementById("saveBtn").addEventListener("click", saveEvent);
   document.getElementById("closeBtn").addEventListener("click", closeModal);
 
-  /* BUTTONS EVENT */
-  document.getElementById("deleteBtn").addEventListener("click", deleteEvent);
-  document.getElementById("cancelBtn2").addEventListener("click", closeEventModal);
-  document.getElementById("newBtn").addEventListener("click", () => {
-    closeEventModal();
-    openModal();
-  });
+  /* DISPO */
+  document.getElementById("saveAvailBtn").addEventListener("click", saveAvailability);
+  document.getElementById("closeAvailBtn").addEventListener("click", closeAvailModal);
 });
 
-/* LOAD EVENTS */
-async function loadEvents() {
-  const snapshot = await getDocs(collection(db, "events"));
+/* 🔥 LOAD ALL (events + dispos) */
+async function loadAll() {
+  const snapshot = await getDocs(collection(db, "availabilities"));
 
   let events = [];
 
   snapshot.forEach(doc => {
+    const d = doc.data();
+
     events.push({
-      id: doc.id,
-      ...doc.data()
+      title: "🟢 " + d.player + " (" + d.start + "-" + d.end + ")",
+      start: d.date,
+      player: d.player,
+      start: d.start,
+      end: d.end
     });
   });
 
   return events;
 }
 
-/* SAVE EVENT */
+/* 💾 SAVE EVENT (scrim / training) */
 async function saveEvent() {
   const title = document.getElementById("title").value;
 
   if (!title) return alert("Nom requis");
 
-  const checkboxes = document.querySelectorAll("input[type='checkbox']");
-  let dispo = [];
-
-  checkboxes.forEach(cb => {
-    if (cb.checked) dispo.push(cb.value);
+  await addDoc(collection(db, "events"), {
+    title: title,
+    start: selectedDate
   });
 
-  const event = {
+  calendar.addEvent({
     title: title,
-    start: selectedDate,
-    dispo: dispo
-  };
-
-  await addDoc(collection(db, "events"), event);
-
-  calendar.addEvent(event);
+    start: selectedDate
+  });
 
   closeModal();
-  document.getElementById("title").value = "";
-
-  checkboxes.forEach(cb => cb.checked = false);
 }
 
-/* DELETE EVENT */
-async function deleteEvent() {
-  if (!selectedEvent) return;
+/* 🕒 SAVE DISPONIBILITÉ */
+async function saveAvailability() {
+  const player = document.getElementById("playerName").value;
+  const start = document.getElementById("startHour").value;
+  const end = document.getElementById("endHour").value;
 
-  await deleteDoc(doc(db, "events", selectedEvent.id));
+  if (!player || !start || !end) {
+    alert("Remplis tout");
+    return;
+  }
 
-  selectedEvent.remove();
+  const event = {
+    player: player,
+    date: selectedAvailDate,
+    start: start,
+    end: end
+  };
 
-  closeEventModal();
+  await addDoc(collection(db, "availabilities"), event);
+
+  calendar.addEvent({
+    title: "🟢 " + player + " (" + start + "-" + end + ")",
+    start: selectedAvailDate
+  });
+
+  closeAvailModal();
 }
 
 /* MODALS */
@@ -140,24 +131,10 @@ function closeModal() {
   document.getElementById("modal").classList.add("hidden");
 }
 
-function openEventModal() {
-  document.getElementById("eventModal").classList.remove("hidden");
+function openAvailModal() {
+  document.getElementById("availModal").classList.remove("hidden");
 }
 
-function closeEventModal() {
-  document.getElementById("eventModal").classList.add("hidden");
+function closeAvailModal() {
+  document.getElementById("availModal").classList.add("hidden");
 }
-
-/* CLICK OUTSIDE */
-document.addEventListener("click", function (e) {
-  const modal = document.getElementById("modal");
-  const eventModal = document.getElementById("eventModal");
-
-  if (!modal.classList.contains("hidden") && e.target === modal) {
-    closeModal();
-  }
-
-  if (!eventModal.classList.contains("hidden") && e.target === eventModal) {
-    closeEventModal();
-  }
-});
