@@ -44,21 +44,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       start: new Date().toISOString().split("T")[0]
     },
 
-    dayCellClassNames: (arg) => {
-      const classes = [];
-
-      const today = new Date();
-      today.setHours(0,0,0,0);
-
-      const cellDate = new Date(arg.date);
-      cellDate.setHours(0,0,0,0);
-
-      if (cellDate < today) classes.push("past-day");
-      if (arg.dateStr === selectedDay) classes.push("selected-day");
-
-      return classes;
-    },
-
     dateClick: (info) => {
 
       const today = new Date().toISOString().split("T")[0];
@@ -81,10 +66,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   /* EVENTS */
   document.getElementById("saveAvailBtn").addEventListener("click", saveAvailability);
   document.getElementById("closeAvailBtn").addEventListener("click", closeAvailModal);
-
   document.getElementById("updateBtn").addEventListener("click", updateEvent);
   document.getElementById("deleteBtn").addEventListener("click", deleteEvent);
-
   document.getElementById("changePlayerBtn").addEventListener("click", resetPlayer);
 
   /* BACKDROP CLICK FIX */
@@ -96,7 +79,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (e.target.id === "editModal") closeEditModal();
   };
 
-  /* PSEUDO UI */
+  /* EXPOSE FUNCTIONS (IMPORTANT MODULE FIX) */
+  window.closeEditModal = closeEditModal;
+
   if (currentPlayer) {
     document.getElementById("playerName").value = currentPlayer;
     document.getElementById("currentPlayerDisplay").textContent =
@@ -107,19 +92,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderPlayersForDay();
 });
 
-/* 📅 FORMAT FR */
-const formatFR = (date) =>
-  date.toLocaleDateString("fr-FR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric"
-  });
-
-/* 📅 WEEK */
+/* WEEK */
 function renderWeek() {
 
   const today = new Date();
-
   let days = [];
 
   for (let i = 0; i < 7; i++) {
@@ -132,7 +108,7 @@ function renderWeek() {
   container.innerHTML = "";
 
   document.getElementById("weekRange").textContent =
-    `📅 Semaine du ${formatFR(days[0])} → ${formatFR(days[6])}`;
+    `📅 Semaine du ${days[0].toLocaleDateString("fr-FR")} → ${days[6].toLocaleDateString("fr-FR")}`;
 
   days.forEach(d => {
 
@@ -190,9 +166,6 @@ async function saveAvailability() {
   currentPlayer = player;
   localStorage.setItem("playerName", player);
 
-  document.getElementById("currentPlayerDisplay").textContent =
-    "Connected as: " + player;
-
   await addDoc(collection(db, "availabilities"), {
     player,
     date: selectedDate,
@@ -208,11 +181,10 @@ async function saveAvailability() {
   closeAvailModal();
 }
 
-/* EDIT OPEN */
+/* EDIT */
 function openEditModal(event) {
 
   if (!currentPlayer) return;
-
   if (event.extendedProps.player !== currentPlayer) return;
 
   selectedEvent = event;
@@ -254,16 +226,15 @@ async function deleteEvent() {
   closeEditModal();
 }
 
-/* RESET USERNAME */
+/* RESET USER */
 function resetPlayer() {
   localStorage.removeItem("playerName");
   currentPlayer = "";
-
   document.getElementById("playerName").value = "";
   document.getElementById("currentPlayerDisplay").textContent = "";
 }
 
-/* PLAYERS LIST */
+/* PLAYERS */
 async function renderPlayersForDay() {
 
   const list = document.getElementById("playersList");
