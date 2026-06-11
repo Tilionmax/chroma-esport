@@ -13,7 +13,7 @@
 <body>
 
 <div class="container">
-  <h1>Planning Équipe Esport</h1>
+  <h1>Overwatch Team Schedule</h1>
 
   <div id="calendar"></div>
 </div>
@@ -22,14 +22,14 @@
 <div id="availModal" class="modal hidden" onclick="closeAddBackdrop(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
 
-    <h3>Ajouter disponibilité</h3>
+    <h3>Add your availability</h3>
 
-    <input id="playerName" placeholder="Pseudo">
+    <input id="playerName" placeholder="Username">
     <input id="startHour" placeholder="HH:MM">
     <input id="endHour" placeholder="HH:MM">
 
-    <button id="saveAvailBtn">Valider</button>
-    <button id="closeAvailBtn">Fermer</button>
+    <button id="saveAvailBtn">Confirm</button>
+    <button id="closeAvailBtn">Close</button>
 
   </div>
 </div>
@@ -38,16 +38,16 @@
 <div id="editModal" class="modal hidden" onclick="closeEditBackdrop(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
 
-    <h3>Gérer disponibilité</h3>
+    <h3>Manage availability</h3>
 
     <p id="editInfo"></p>
 
     <input id="editStart" placeholder="HH:MM">
     <input id="editEnd" placeholder="HH:MM">
 
-    <button id="updateBtn">Modifier</button>
-    <button id="deleteBtn">Supprimer</button>
-    <button onclick="closeEditModal()">Fermer</button>
+    <button id="updateBtn">Edit</button>
+    <button id="deleteBtn">Delete</button>
+    <button onclick="closeEditModal()">Close</button>
 
   </div>
 </div>
