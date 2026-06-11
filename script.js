@@ -10,12 +10,13 @@ import {
 
 /* FIREBASE */
 const firebaseConfig = {
-  apiKey: "TON_API_KEY",
+  apiKey: "AIzaSyBVhYA-HBtN3rG8q0Aj0EfhCsEJ3Nz8jPA",
   authDomain: "chroma-esport.firebaseapp.com",
+  databaseURL: "https://chroma-esport-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "chroma-esport",
-  storageBucket: "chroma-esport.appspot.com",
-  messagingSenderId: "TON_ID",
-  appId: "TON_APP_ID"
+  storageBucket: "chroma-esport.firebasestorage.app",
+  messagingSenderId: "555749328122",
+  appId: "1:555749328122:web:5765da259633ef047e3543"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -51,9 +52,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("saveAvailBtn").addEventListener("click", saveAvailability);
   document.getElementById("closeAvailBtn").addEventListener("click", closeAvailModal);
+
+  /* ESC pour fermer modal */
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeAvailModal();
+  });
 });
 
-/* LOAD FIRESTORE */
+/* 🔥 LOAD FIRESTORE */
 async function loadAll() {
   const snapshot = await getDocs(collection(db, "availabilities"));
 
@@ -75,7 +81,7 @@ async function loadAll() {
   return events;
 }
 
-/* SAVE AVAILABILITY */
+/* 💾 SAVE */
 async function saveAvailability() {
   const player = document.getElementById("playerName").value;
   const start = document.getElementById("startHour").value;
@@ -103,13 +109,13 @@ async function saveAvailability() {
   closeAvailModal();
 }
 
-/* DELETE ONLY OWN AVAILABILITY */
+/* 🗑 DELETE ONLY OWN */
 async function handleDelete(event) {
 
   const eventPlayer = event.extendedProps.player;
 
   if (!currentPlayer) {
-    alert("Entre ton pseudo d'abord");
+    alert("Entre ton pseudo pour supprimer");
     return;
   }
 
@@ -135,3 +141,8 @@ function openAvailModal() {
 function closeAvailModal() {
   document.getElementById("availModal").classList.add("hidden");
 }
+
+/* clic backdrop */
+window.backdropClose = function(event) {
+  closeAvailModal();
+};
