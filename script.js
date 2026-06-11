@@ -29,11 +29,13 @@ let selectedEvent = null;
 
 let currentPlayer = localStorage.getItem("playerName") || "";
 
-/* ================= INIT ================= */
+/* MODAL USER */
+const userModal = document.getElementById("userModal");
+
+/* INIT */
 document.addEventListener("DOMContentLoaded", async () => {
 
   const calendarEl = document.getElementById("calendar");
-
   const events = await loadAll();
 
   calendar = new FullCalendar.Calendar(calendarEl, {
@@ -65,46 +67,47 @@ document.addEventListener("DOMContentLoaded", async () => {
   /* EVENTS */
   document.getElementById("saveAvailBtn").addEventListener("click", saveAvailability);
   document.getElementById("closeAvailBtn").addEventListener("click", closeAvailModal);
-  document.getElementById("updateBtn").addEventListener("click", updateEvent);
-  document.getElementById("deleteBtn").addEventListener("click", deleteEvent);
-  document.getElementById("changePlayerBtn").addEventListener("click", resetPlayer);
 
-  /* BACKDROP */
-  window.closeAddBackdrop = (e) => {
-    if (e.target.id === "availModal") closeAvailModal();
-  };
+  document.getElementById("changePlayerBtn").addEventListener("click", () => {
+    document.getElementById("newUsername").value = currentPlayer;
+    userModal.classList.remove("hidden");
+  });
 
-  window.closeEditBackdrop = (e) => {
-    if (e.target.id === "editModal") closeEditModal();
-  };
+  document.getElementById("closeUserBtn").addEventListener("click", () => {
+    userModal.classList.add("hidden");
+  });
 
-  window.closeEditModal = closeEditModal;
+  document.getElementById("saveUserBtn").addEventListener("click", () => {
+    const name = document.getElementById("newUsername").value.trim();
+    if (!name) return;
+
+    currentPlayer = name;
+    localStorage.setItem("playerName", name);
+
+    updatePlayerUI();
+    userModal.classList.add("hidden");
+  });
 
   updatePlayerUI();
-
   renderWeek();
   renderPlayersForDay();
 });
 
-/* ================= UI USER ================= */
+/* USER UI */
 function updatePlayerUI() {
   const text = document.getElementById("playerText");
   const input = document.getElementById("playerName");
 
   if (!currentPlayer) {
-    if (text) text.textContent = "";
+    text.textContent = "Not connected";
     return;
   }
 
-  if (text) {
-    text.textContent = "Connected as: " + currentPlayer;
-  }
-
-  if (input) {
-    input.value = currentPlayer;
-  }
+  text.textContent = "Connected as: " + currentPlayer;
+  input.value = currentPlayer;
 }
-/* ================= WEEK ================= */
+
+/* WEEK */
 function renderWeek() {
 
   const today = new Date();
@@ -123,7 +126,6 @@ function renderWeek() {
     `📅 Semaine du ${days[0].toLocaleDateString("fr-FR")} → ${days[6].toLocaleDateString("fr-FR")}`;
 
   days.forEach(d => {
-
     const iso = d.toISOString().split("T")[0];
 
     const div = document.createElement("div");
@@ -146,7 +148,7 @@ function renderWeek() {
   });
 }
 
-/* ================= LOAD ================= */
+/* LOAD */
 async function loadAll() {
   const snapshot = await getDocs(collection(db, "availabilities"));
 
@@ -166,7 +168,7 @@ async function loadAll() {
   return events;
 }
 
-/* ================= SAVE ================= */
+/* SAVE */
 async function saveAvailability() {
 
   const player = document.getElementById("playerName").value;
@@ -195,7 +197,7 @@ async function saveAvailability() {
   closeAvailModal();
 }
 
-/* ================= EDIT ================= */
+/* EDIT */
 function openEditModal(event) {
 
   if (!currentPlayer) return;
@@ -203,52 +205,17 @@ function openEditModal(event) {
 
   selectedEvent = event;
 
-  document.getElementById("editInfo").textContent =
-    `${event.extendedProps.player} • ${event.extendedProps.start} → ${event.extendedProps.end}`;
-
   document.getElementById("editModal").classList.remove("hidden");
 }
 
-/* ================= UPDATE ================= */
-async function updateEvent() {
-
-  await deleteDoc(doc(db, "availabilities", selectedEvent.id));
-
-  await addDoc(collection(db, "availabilities"), {
-    player: currentPlayer,
-    date: selectedEvent.startStr,
-    start: document.getElementById("editStart").value,
-    end: document.getElementById("editEnd").value
-  });
-
-  calendar.removeAllEvents();
-  const refreshed = await loadAll();
-  refreshed.forEach(ev => calendar.addEvent(ev));
-
-  renderPlayersForDay();
-  closeEditModal();
-}
-
-/* ================= DELETE ================= */
+/* DELETE */
 async function deleteEvent() {
-
   await deleteDoc(doc(db, "availabilities", selectedEvent.id));
-
   selectedEvent.remove();
-
   renderPlayersForDay();
-  closeEditModal();
 }
 
-/* ================= RESET PLAYER ================= */
-function resetPlayer() {
-  localStorage.removeItem("playerName");
-  currentPlayer = "";
-
-  updatePlayerUI();
-}
-
-/* ================= PLAYERS ================= */
+/* PLAYERS */
 async function renderPlayersForDay() {
 
   const list = document.getElementById("playersList");
@@ -263,11 +230,6 @@ async function renderPlayersForDay() {
     if (d.date === selectedDay) players.push(d);
   });
 
-  if (players.length === 0) {
-    list.innerHTML = "Aucun joueur disponible";
-    return;
-  }
-
   players.sort((a,b) => a.start.localeCompare(b.start));
 
   list.innerHTML = "";
@@ -278,14 +240,14 @@ async function renderPlayersForDay() {
 
     div.innerHTML = `
       <span class="player-name">🟢 ${p.player}</span>
-      <span class="player-time">${p.start} → ${p.end}</span>
+      <span>${p.start} → ${p.end}</span>
     `;
 
     list.appendChild(div);
   });
 }
 
-/* ================= MODALS ================= */
+/* MODALS */
 function openAvailModal() {
   document.getElementById("availModal").classList.remove("hidden");
 }
@@ -299,15 +261,9 @@ function closeEditModal() {
   selectedEvent = null;
 }
 
-/* ================= btn change name ================= */
-document.getElementById("changePlayerBtn").addEventListener("click", () => {
-
-  const newName = prompt("Change your username:");
-
-  if (!newName) return;
-
-  currentPlayer = newName;
-  localStorage.setItem("playerName", newName);
-
-  updatePlayerUI();
-});
+/* BACKDROP USER */
+window.closeUserBackdrop = (e) => {
+  if (e.target.id === "userModal") {
+    userModal.classList.add("hidden");
+  }
+};
