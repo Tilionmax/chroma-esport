@@ -28,7 +28,7 @@ h1 {
 /* WEEK */
 .week-bar {
   margin-top: 15px;
-  background: #00d3dd;
+  background: #3c9195;
   padding: 12px;
   border-radius: 10px;
 }
@@ -41,10 +41,9 @@ h1 {
 }
 
 #weekDays {
-  display: flex;
+  display: inline-block;
   gap: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
+ justify-content: center;
 }
 
 .week-day {
