@@ -148,10 +148,10 @@ button {
 }
 
  .fc .fc-button{
-    background-color: #3c9195;
-    border-color: #3c9195;
-    color: #000000;
-    font-weight: bold;
+    background-color: #3c9195 !important;
+    border-color: #3c9195 !important;
+    color: #000000 !important;
+    font-weight: bold !important;
 }
 .fc .fc-button:hover {
     background-color: #00d3dd !important;
