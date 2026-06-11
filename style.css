@@ -97,3 +97,14 @@ button {
   border-radius: 5px;
   cursor: pointer;
 }
+/* Jour actuel */
+.fc-day-today {
+  background-color: #3c9195 !important;
+  color: white !important;
+}
+
+/* Jour sélectionné */
+.selected-day {
+  background-color: #00e5ff !important;
+  color: black !important;
+}
