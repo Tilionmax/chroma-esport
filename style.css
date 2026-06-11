@@ -6,7 +6,7 @@ body {
 }
 
 .container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: auto;
   padding: 20px;
 }
@@ -19,9 +19,16 @@ h1 {
 #calendar {
   background: white;
   color: black;
-  padding: 15px;
+  padding: 10px;
   border-radius: 10px;
-  min-height: 850px;
+  min-height: 800px;
+}
+
+/* jours passés */
+.past-day {
+  background: #1f2937 !important;
+  opacity: 0.4;
+  pointer-events: none;
 }
 
 /* MODAL */
