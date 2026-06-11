@@ -124,8 +124,12 @@ h1 {
   padding: 20px;
   border-radius: 10px;
   width: 320px;
-}
 
+}
+placeholder {
+width: 120px
+
+}
 .hidden {
   display: none;
 }
