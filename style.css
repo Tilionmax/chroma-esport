@@ -16,6 +16,7 @@ h1 {
   color: #3c9195;
 }
 
+/* CALENDAR */
 #calendar {
   background: white;
   color: black;
@@ -29,6 +30,36 @@ h1 {
   background: #737373 !important;
   opacity: 0.4;
   pointer-events: none;
+}
+
+/* LISTE JOUEURS */
+.stats {
+  margin-top: 20px;
+  background: #0b1a3a;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+#playersList {
+  margin-top: 10px;
+}
+
+.player-card {
+  background: #020f2a;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.player-name {
+  font-weight: bold;
+  color: #3c9195;
+}
+
+.player-time {
+  color: white;
 }
 
 /* MODAL */
