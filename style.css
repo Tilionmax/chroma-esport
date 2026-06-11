@@ -32,7 +32,47 @@ h1 {
   pointer-events: none;
 }
 
-/* LISTE JOUEURS */
+/* jour sélectionné */
+.selected-day {
+  background-color: #00e5ff !important;
+}
+
+/* jour actuel */
+.fc-day-today {
+  background-color: #3c9195 !important;
+  color: white !important;
+}
+
+/* SEMAINE */
+.week-bar {
+  margin-top: 15px;
+  background: #0b1a3a;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+#weekRange {
+  text-align: center;
+  font-weight: bold;
+  color: #00e5ff;
+  margin-bottom: 10px;
+}
+
+#weekDays {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.week-day {
+  background: #020f2a;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+/* PLAYERS */
 .stats {
   margin-top: 20px;
   background: #0b1a3a;
@@ -54,8 +94,8 @@ h1 {
 }
 
 .player-name {
-  font-weight: bold;
   color: #3c9195;
+  font-weight: bold;
 }
 
 .player-time {
@@ -98,19 +138,6 @@ button {
   cursor: pointer;
 }
 
-/* Jour actuel */
-.fc-day-today {
-  background-color: #3c9195 !important;
-  color: white !important;
-}
-
-/* Jour sélectionné */
-.selected-day {
-  background-color: #00e5ff !important;
-  color: black !important;
-}
-
-/* affichage pseudo */
 #currentPlayerDisplay {
   text-align: center;
   margin-bottom: 10px;
