@@ -144,3 +144,7 @@ button {
     border-color: #ffffff;
     color: #ffffff;
 }
+:root {
+    --fc-today-bg-color: #3c91957d;
+    
+}
