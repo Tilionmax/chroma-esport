@@ -27,7 +27,6 @@ let selectedDate = null;
 let selectedDay = new Date().toISOString().split("T")[0];
 let selectedEvent = null;
 
-/* PSEUDO */
 let currentPlayer = localStorage.getItem("playerName") || "";
 
 /* INIT */
@@ -84,7 +83,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("closeAvailBtn").addEventListener("click", closeAvailModal);
   document.getElementById("updateBtn").addEventListener("click", updateEvent);
   document.getElementById("deleteBtn").addEventListener("click", deleteEvent);
-  document.getElementById("changePlayerBtn").addEventListener("click", resetPlayer);
 
   if (currentPlayer) {
     document.getElementById("playerName").value = currentPlayer;
@@ -96,7 +94,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderPlayersForDay();
 });
 
-/* WEEK */
+/* 📅 FORMAT DATE FR */
+const formatFR = (date) =>
+  date.toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric"
+  });
+
+/* 📅 WEEK */
 function renderWeek() {
 
   const today = new Date();
@@ -113,12 +119,7 @@ function renderWeek() {
   container.innerHTML = "";
 
   document.getElementById("weekRange").textContent =
-    const formatFR = (date) => {
-      return date.toLocaleDateString("fr-FR");
-};
-
-  document.getElementById("weekRange").textContent =
-  `📅 Semaine du ${formatFR(days[0])} → ${formatFR(days[6])}`;
+    `📅 Semaine du ${formatFR(days[0])} → ${formatFR(days[6])}`;
 
   days.forEach(d => {
 
@@ -144,7 +145,7 @@ function renderWeek() {
   });
 }
 
-/* LOAD */
+/* 🔥 LOAD */
 async function loadAll() {
   const snapshot = await getDocs(collection(db, "availabilities"));
 
@@ -164,7 +165,7 @@ async function loadAll() {
   return events;
 }
 
-/* SAVE */
+/* 💾 SAVE */
 async function saveAvailability() {
 
   const player = document.getElementById("playerName").value;
@@ -187,24 +188,23 @@ async function saveAvailability() {
       end
     });
 
-    // 🔥 1. fermer popup DIRECT
-    closeAvailModal();
-
-    // 🔥 2. vider + reload propre
+    // 🔥 refresh UI direct
     calendar.removeAllEvents();
 
     const refreshed = await loadAll();
     refreshed.forEach(ev => calendar.addEvent(ev));
 
-    // 🔥 3. update liste joueurs
     renderPlayersForDay();
 
-  } catch (error) {
-    console.error("Erreur save:", error);
-    alert("Erreur lors de la sauvegarde");
+    // 🔥 fermeture popup
+    closeAvailModal();
+
+  } catch (e) {
+    console.error(e);
   }
 }
-/* EDIT */
+
+/* ✏️ EDIT */
 function openEditModal(event) {
 
   if (!currentPlayer) return;
@@ -218,7 +218,7 @@ function openEditModal(event) {
   document.getElementById("editModal").classList.remove("hidden");
 }
 
-/* UPDATE */
+/* 🔄 UPDATE */
 async function updateEvent() {
 
   await deleteDoc(doc(db, "availabilities", selectedEvent.id));
@@ -230,12 +230,16 @@ async function updateEvent() {
     end: document.getElementById("editEnd").value
   });
 
-  refreshCalendar();
+  calendar.removeAllEvents();
+
+  const refreshed = await loadAll();
+  refreshed.forEach(ev => calendar.addEvent(ev));
+
   renderPlayersForDay();
   closeEditModal();
 }
 
-/* DELETE */
+/* ❌ DELETE */
 async function deleteEvent() {
 
   await deleteDoc(doc(db, "availabilities", selectedEvent.id));
@@ -246,7 +250,7 @@ async function deleteEvent() {
   closeEditModal();
 }
 
-/* PLAYERS */
+/* 👥 PLAYERS LIST */
 async function renderPlayersForDay() {
 
   const list = document.getElementById("playersList");
@@ -283,7 +287,7 @@ async function renderPlayersForDay() {
   });
 }
 
-/* MODALS */
+/* 📌 MODALS */
 function openAvailModal() {
   document.getElementById("availModal").classList.remove("hidden");
 }
@@ -295,11 +299,4 @@ function closeAvailModal() {
 function closeEditModal() {
   document.getElementById("editModal").classList.add("hidden");
   selectedEvent = null;
-}
-
-function resetPlayer() {
-  localStorage.removeItem("playerName");
-  currentPlayer = "";
-  document.getElementById("playerName").value = "";
-  document.getElementById("currentPlayerDisplay").textContent = "";
 }
