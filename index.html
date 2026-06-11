@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Planning V4 Firebase</title>
+  <title>Planning Équipe v3</title>
 
   <link rel="stylesheet" href="style.css">
 
@@ -12,19 +12,28 @@
 
 <body>
 
-<h1>📅 Planning Équipe V4</h1>
+<div class="container">
+  <h1>📅 Planning équipe v3</h1>
 
-<div id="calendar"></div>
+  <div id="calendar"></div>
+
+  <div class="stats">
+    <h3>📊 Statistiques présence</h3>
+    <div id="stats"></div>
+  </div>
+</div>
 
 <!-- MODAL -->
 <div id="modal" class="modal hidden">
   <div class="modal-content">
 
-    <h2>Créer entraînement</h2>
+    <h2>➕ Créer entraînement</h2>
 
     <input id="title" placeholder="Nom séance">
 
-    <h3>👥 Joueurs présents</h3>
+    <h3>🧑 Disponibilité joueurs</h3>
+    <p class="hint">Coche ceux disponibles</p>
+
     <div id="players"></div>
 
     <button onclick="saveEvent()">Créer</button>
@@ -33,6 +42,6 @@
   </div>
 </div>
 
-<script type="module" src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
