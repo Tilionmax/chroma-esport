@@ -10,13 +10,12 @@ import {
 
 /* FIREBASE */
 const firebaseConfig = {
-  apiKey: "AIzaSyBVhYA-HBtN3rG8q0Aj0EfhCsEJ3Nz8jPA",
+  apiKey: "TON_API_KEY",
   authDomain: "chroma-esport.firebaseapp.com",
-  databaseURL: "https://chroma-esport-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "chroma-esport",
-  storageBucket: "chroma-esport.firebasestorage.app",
-  messagingSenderId: "555749328122",
-  appId: "1:555749328122:web:5765da259633ef047e3543"
+  storageBucket: "chroma-esport.appspot.com",
+  messagingSenderId: "TON_ID",
+  appId: "TON_APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -39,7 +38,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     initialView: "dayGridMonth",
     events: events,
 
-    /* 🔥 HEURES PROPRES */
+    /* affichage propre heure */
     eventTimeFormat: {
       hour: '2-digit',
       minute: '2-digit',
@@ -72,6 +71,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 });
 
+/* VALID TIME */
+function isValidTime(time) {
+  return /^([01]\d|2[0-3]):([0-5]\d)$/.test(time);
+}
+
 /* LOAD FIRESTORE */
 async function loadAll() {
   const snapshot = await getDocs(collection(db, "availabilities"));
@@ -83,7 +87,7 @@ async function loadAll() {
 
     events.push({
       id: docSnap.id,
-      title: `🟢 ${d.player}`,
+      title: `🟢 ${d.player} (${d.start} - ${d.end})`,
       start: d.date,
       extendedProps: {
         player: d.player,
@@ -107,6 +111,11 @@ async function saveAvailability() {
     return;
   }
 
+  if (!isValidTime(start) || !isValidTime(end)) {
+    alert("Format HH:MM requis (ex: 15:30)");
+    return;
+  }
+
   currentPlayer = player;
 
   await addDoc(collection(db, "availabilities"), {
@@ -120,7 +129,7 @@ async function saveAvailability() {
   closeAvailModal();
 }
 
-/* OPEN EDIT POPUP */
+/* OPEN EDIT */
 function openEditModal(event) {
 
   const eventPlayer = event.extendedProps.player;
@@ -138,7 +147,10 @@ function openEditModal(event) {
   selectedEvent = event;
 
   document.getElementById("editInfo").innerText =
-    `${event.extendedProps.player} - ${event.extendedProps.start} → ${event.extendedProps.end}`;
+    `${eventPlayer} • ${event.extendedProps.start} → ${event.extendedProps.end}`;
+
+  document.getElementById("editStart").value = event.extendedProps.start;
+  document.getElementById("editEnd").value = event.extendedProps.end;
 
   document.getElementById("editModal").classList.remove("hidden");
 }
@@ -149,8 +161,8 @@ async function updateEvent() {
   const start = document.getElementById("editStart").value;
   const end = document.getElementById("editEnd").value;
 
-  if (!start || !end) {
-    alert("Remplis les heures");
+  if (!isValidTime(start) || !isValidTime(end)) {
+    alert("HH:MM requis");
     return;
   }
 
@@ -201,7 +213,7 @@ function closeEditModal() {
   selectedEvent = null;
 }
 
-/* BACKDROP CLICK */
+/* BACKDROP */
 window.closeAddBackdrop = function(e) {
   closeAvailModal();
 };
