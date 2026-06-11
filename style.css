@@ -41,9 +41,17 @@ h1 {
 }
 
 #weekDays {
-  display: inline-block;
+  
   gap: 8px;
- justify-content: center;
+ 
+  display: inline-grid;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-content: space-between;
+  align-items: stretch;
+  justify-items: stretch;
+  grid-auto-flow: column;
 }
 
 .week-day {
