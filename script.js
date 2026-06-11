@@ -174,20 +174,31 @@ async function saveAvailability() {
   document.getElementById("currentPlayerDisplay").textContent =
     "Connected as: " + player;
 
-  await addDoc(collection(db, "availabilities"), {
-    player,
-    date: selectedDate,
-    start,
-    end
-  });
+  try {
+    await addDoc(collection(db, "availabilities"), {
+      player,
+      date: selectedDate,
+      start,
+      end
+    });
 
-  refreshCalendar();
-  renderPlayersForDay();
+    // 🔥 1. fermer popup DIRECT
+    closeAvailModal();
 
-  // ✅ FIX : fermeture popup
-  closeAvailModal();
+    // 🔥 2. vider + reload propre
+    calendar.removeAllEvents();
+
+    const refreshed = await loadAll();
+    refreshed.forEach(ev => calendar.addEvent(ev));
+
+    // 🔥 3. update liste joueurs
+    renderPlayersForDay();
+
+  } catch (error) {
+    console.error("Erreur save:", error);
+    alert("Erreur lors de la sauvegarde");
+  }
 }
-
 /* EDIT */
 function openEditModal(event) {
 
