@@ -10,12 +10,12 @@ import {
 
 /* FIREBASE */
 const firebaseConfig = {
-  apiKey: "TON_API_KEY",
+  apiKey: "AIzaSyBVhYA-HBtN3rG8q0Aj0EfhCsEJ3Nz8jPA",
   authDomain: "chroma-esport.firebaseapp.com",
   projectId: "chroma-esport",
   storageBucket: "chroma-esport.appspot.com",
-  messagingSenderId: "TON_ID",
-  appId: "TON_APP_ID"
+  messagingSenderId: "555749328122",
+  appId: "1:555749328122:web:5765da259633ef047e3543"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -27,7 +27,7 @@ let selectedDate = null;
 let selectedDay = null;
 let selectedEvent = null;
 
-/* Pseudo sauvegardé */
+/* 🔥 PSEUDO STOCKÉ */
 let currentPlayer = localStorage.getItem("playerName") || "";
 
 /* INIT */
@@ -53,41 +53,38 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     dayCellClassNames: (arg) => {
 
-  const classes = [];
+      const classes = [];
 
-  const today = new Date();
-  today.setHours(0,0,0,0);
+      const today = new Date();
+      today.setHours(0,0,0,0);
 
-  const cellDate = new Date(arg.date);
-  cellDate.setHours(0,0,0,0);
+      const cellDate = new Date(arg.date);
+      cellDate.setHours(0,0,0,0);
 
-  if (cellDate < today) {
-    classes.push("past-day");
-  }
+      if (cellDate < today) {
+        classes.push("past-day");
+      }
 
-  if (selectedDay === arg.dateStr) {
-    classes.push("selected-day");
-  }
+      if (selectedDay === arg.dateStr) {
+        classes.push("selected-day");
+      }
 
-  return classes;
-},
+      return classes;
+    },
 
     dateClick: (info) => {
 
       const today = new Date().toISOString().split("T")[0];
 
-      if (info.dateStr < today) {
-        alert("Impossible de choisir une date passée");
-        return;
-      }
+      if (info.dateStr < today) return;
 
       selectedDate = info.dateStr;
-selectedDay = info.dateStr;
+      selectedDay = info.dateStr;
 
-calendar.render();
+      calendar.render();
 
-openAvailModal();
-renderPlayersForDay();
+      openAvailModal();
+      renderPlayersForDay();
     },
 
     eventClick: (info) => {
@@ -99,13 +96,15 @@ renderPlayersForDay();
 
   document.getElementById("saveAvailBtn").addEventListener("click", saveAvailability);
   document.getElementById("closeAvailBtn").addEventListener("click", closeAvailModal);
-
   document.getElementById("updateBtn").addEventListener("click", updateEvent);
   document.getElementById("deleteBtn").addEventListener("click", deleteEvent);
+  document.getElementById("changePlayerBtn").addEventListener("click", resetPlayer);
 
-  document
-    .getElementById("changePlayerBtn")
-    .addEventListener("click", resetPlayer);
+  if (currentPlayer) {
+    document.getElementById("playerName").value = currentPlayer;
+    document.getElementById("currentPlayerDisplay").textContent =
+      "Connected as: " + currentPlayer;
+  }
 });
 
 /* LOAD */
@@ -138,16 +137,14 @@ async function saveAvailability() {
   const start = document.getElementById("startHour").value;
   const end = document.getElementById("endHour").value;
 
-  if (!player || !start || !end) {
-    alert("Remplis tout");
-    return;
-  }
+  if (!player || !start || !end) return;
 
   currentPlayer = player;
+  localStorage.setItem("playerName", player);
 
-/* Sauvegarde navigateur */
-localStorage.setItem("playerName", player);
-  
+  document.getElementById("currentPlayerDisplay").textContent =
+    "Connected as: " + player;
+
   await addDoc(collection(db, "availabilities"), {
     player,
     date: selectedDate,
@@ -163,15 +160,9 @@ localStorage.setItem("playerName", player);
 /* EDIT */
 function openEditModal(event) {
 
-  if (!currentPlayer) {
-    alert("Entre ton pseudo");
-    return;
-  }
+  if (!currentPlayer) return;
 
-  if (event.extendedProps.player !== currentPlayer) {
-    alert("Tu ne peux modifier que tes disponibilités");
-    return;
-  }
+  if (event.extendedProps.player !== currentPlayer) return;
 
   selectedEvent = event;
 
@@ -220,11 +211,11 @@ async function refreshCalendar() {
   refreshed.forEach(ev => calendar.addEvent(ev));
 }
 
-/* LISTE JOUEURS */
+/* PLAYERS LIST */
 async function renderPlayersForDay() {
 
   const list = document.getElementById("playersList");
-  list.innerHTML = "Chargement...";
+  list.innerHTML = "Loading...";
 
   const snapshot = await getDocs(collection(db, "availabilities"));
 
@@ -262,9 +253,6 @@ async function renderPlayersForDay() {
 
 /* MODALS */
 function openAvailModal() {
-
-  document.getElementById("playerName").value = currentPlayer;
-
   document.getElementById("availModal").classList.remove("hidden");
 }
 
@@ -277,5 +265,11 @@ function closeEditModal() {
   selectedEvent = null;
 }
 
-window.closeAddBackdrop = () => closeAvailModal();
-window.closeEditBackdrop = () => closeEditModal();
+/* RESET PSEUDO */
+function resetPlayer() {
+  localStorage.removeItem("playerName");
+  currentPlayer = "";
+
+  document.getElementById("playerName").value = "";
+  document.getElementById("currentPlayerDisplay").textContent = "";
+}
