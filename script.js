@@ -1,62 +1,70 @@
-let calendar;
-let selectedDate = null;
-
-document.addEventListener("DOMContentLoaded", function () {
-
-  const calendarEl = document.getElementById("calendar");
-
-  calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: "dayGridMonth",
-    selectable: true,
-
-    dateClick: function(info) {
-      selectedDate = info.dateStr;
-      openModal();
-      document.getElementById("stats").innerText = "Date sélectionnée : " + selectedDate;
-    },
-
-    events: []
-  });
-
-  calendar.render();
-});
-
-// MODAL
-function openModal() {
-  document.getElementById("modal").classList.remove("hidden");
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
 }
 
-function closeModal() {
-  document.getElementById("modal").classList.add("hidden");
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
 }
 
-// EVENTS
-function saveEvent() {
-  const title = document.getElementById("title").value;
-
-  if (!title) return alert("Nom requis");
-
-  calendar.addEvent({
-    title: title,
-    start: selectedDate
-  });
-
-  closeModal();
-  document.getElementById("title").value = "";
+h1 {
+  text-align: center;
+  color: #00e5ff;
 }
 
-// BUTTONS (IMPORTANT)
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("saveBtn").addEventListener("click", saveEvent);
-  document.getElementById("closeBtn").addEventListener("click", closeModal);
-});
-document.addEventListener("click", function (e) {
-  const modal = document.getElementById("modal");
-  const content = document.querySelector(".modal-content");
+/* CALENDAR */
+#calendar {
+  background: white;
+  color: black;
+  padding: 10px;
+  border-radius: 10px;
+}
 
-  if (modal.classList.contains("hidden")) return;
+/* STATS */
+.stats {
+  margin-top: 20px;
+  background: #1e293b;
+  padding: 10px;
+  border-radius: 10px;
+}
 
-  if (e.target === modal) {
-    closeModal();
-  }
-});
+/* MODAL */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+}
+
+/* CACHE */
+.hidden {
+  display: none !important;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+button {
+  padding: 10px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
