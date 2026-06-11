@@ -3,7 +3,9 @@ import {
   getFirestore,
   collection,
   addDoc,
-  getDocs
+  getDocs,
+  deleteDoc,
+  doc
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 /* FIREBASE */
@@ -22,6 +24,7 @@ const db = getFirestore(app);
 /* VARIABLES */
 let calendar;
 let selectedDate = null;
+let currentPlayer = "";
 
 /* INIT */
 document.addEventListener("DOMContentLoaded", async () => {
@@ -37,6 +40,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     dateClick: (info) => {
       selectedDate = info.dateStr;
       openAvailModal();
+    },
+
+    eventClick: (info) => {
+      handleDelete(info.event);
     }
   });
 
@@ -46,25 +53,29 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("closeAvailBtn").addEventListener("click", closeAvailModal);
 });
 
-/* 🔥 LOAD FIRESTORE */
+/* LOAD FIRESTORE */
 async function loadAll() {
   const snapshot = await getDocs(collection(db, "availabilities"));
 
   let events = [];
 
-  snapshot.forEach(doc => {
-    const d = doc.data();
+  snapshot.forEach(docSnap => {
+    const d = docSnap.data();
 
     events.push({
+      id: docSnap.id,
       title: `🟢 ${d.player} (${d.start}-${d.end})`,
-      start: d.date
+      start: d.date,
+      extendedProps: {
+        player: d.player
+      }
     });
   });
 
   return events;
 }
 
-/* 💾 SAVE AVAILABILITY */
+/* SAVE AVAILABILITY */
 async function saveAvailability() {
   const player = document.getElementById("playerName").value;
   const start = document.getElementById("startHour").value;
@@ -75,6 +86,8 @@ async function saveAvailability() {
     return;
   }
 
+  currentPlayer = player;
+
   await addDoc(collection(db, "availabilities"), {
     player,
     date: selectedDate,
@@ -82,13 +95,36 @@ async function saveAvailability() {
     end
   });
 
-  /* 🔄 REFRESH CALENDAR PROPREMENT */
   calendar.removeAllEvents();
 
   const refreshed = await loadAll();
   refreshed.forEach(ev => calendar.addEvent(ev));
 
   closeAvailModal();
+}
+
+/* DELETE ONLY OWN AVAILABILITY */
+async function handleDelete(event) {
+
+  const eventPlayer = event.extendedProps.player;
+
+  if (!currentPlayer) {
+    alert("Entre ton pseudo d'abord");
+    return;
+  }
+
+  if (eventPlayer !== currentPlayer) {
+    alert("Tu ne peux supprimer que tes propres disponibilités");
+    return;
+  }
+
+  const confirmDelete = confirm("Supprimer ta disponibilité ?");
+
+  if (!confirmDelete) return;
+
+  await deleteDoc(doc(db, "availabilities", event.id));
+
+  event.remove();
 }
 
 /* MODAL */
