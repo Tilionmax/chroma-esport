@@ -79,10 +79,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 /* USER */
 function updateUI() {
-  document.getElementById("playerText").textContent =
-    currentPlayer ? `Connected as: ${currentPlayer}` : "";
 
-  document.getElementById("playerName").value = currentPlayer;
+  const playerText = document.getElementById("playerText");
+
+  if (playerText) {
+    playerText.textContent =
+      currentPlayer ? `Connected as: ${currentPlayer}` : "";
+  }
+
 }
 
 /* USERNAME MODAL */
