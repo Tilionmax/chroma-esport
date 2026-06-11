@@ -102,20 +102,17 @@ function sendDiscord(event) {
   });
 }
 
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBVhYA-HBtN3rG8q0Aj0EfhCsEJ3Nz8jPA",
+  apiKey: "XXX",
   authDomain: "chroma-esport.firebaseapp.com",
   projectId: "chroma-esport",
-  storageBucket: "chroma-esport.firebasestorage.app",
+  storageBucket: "chroma-esport.appspot.com",
   messagingSenderId: "555749328122",
   appId: "1:555749328122:web:5765da259633ef047e3543"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+console.log("Firebase OK");
