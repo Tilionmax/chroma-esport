@@ -66,3 +66,15 @@ button {
   border-radius: 5px;
   cursor: pointer;
 }
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.modal-content {
+  z-index: 10000;
+}
