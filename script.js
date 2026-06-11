@@ -25,6 +25,7 @@ const db = getFirestore(app);
 /* VARIABLES */
 let calendar;
 let selectedDate = null;
+let selectedEvent = null;
 let currentPlayer = "";
 
 /* INIT */
@@ -44,7 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     },
 
     eventClick: (info) => {
-      handleDelete(info.event);
+      openEditModal(info.event);
     }
   });
 
@@ -53,13 +54,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("saveAvailBtn").addEventListener("click", saveAvailability);
   document.getElementById("closeAvailBtn").addEventListener("click", closeAvailModal);
 
-  /* ESC pour fermer modal */
+  document.getElementById("updateBtn").addEventListener("click", updateEvent);
+  document.getElementById("deleteBtn").addEventListener("click", deleteEvent);
+
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeAvailModal();
+    if (e.key === "Escape") {
+      closeAvailModal();
+      closeEditModal();
+    }
   });
 });
 
-/* 🔥 LOAD FIRESTORE */
+/* LOAD */
 async function loadAll() {
   const snapshot = await getDocs(collection(db, "availabilities"));
 
@@ -73,7 +79,9 @@ async function loadAll() {
       title: `🟢 ${d.player} (${d.start}-${d.end})`,
       start: d.date,
       extendedProps: {
-        player: d.player
+        player: d.player,
+        start: d.start,
+        end: d.end
       }
     });
   });
@@ -81,7 +89,7 @@ async function loadAll() {
   return events;
 }
 
-/* 💾 SAVE */
+/* SAVE */
 async function saveAvailability() {
   const player = document.getElementById("playerName").value;
   const start = document.getElementById("startHour").value;
@@ -101,39 +109,78 @@ async function saveAvailability() {
     end
   });
 
-  calendar.removeAllEvents();
-
-  const refreshed = await loadAll();
-  refreshed.forEach(ev => calendar.addEvent(ev));
-
+  refreshCalendar();
   closeAvailModal();
 }
 
-/* 🗑 DELETE ONLY OWN */
-async function handleDelete(event) {
+/* OPEN EDIT */
+function openEditModal(event) {
 
   const eventPlayer = event.extendedProps.player;
 
   if (!currentPlayer) {
-    alert("Entre ton pseudo pour supprimer");
+    alert("Entre ton pseudo d'abord");
     return;
   }
 
   if (eventPlayer !== currentPlayer) {
-    alert("Tu ne peux supprimer que tes propres disponibilités");
+    alert("Tu ne peux gérer que tes disponibilités");
     return;
   }
 
-  const confirmDelete = confirm("Supprimer ta disponibilité ?");
+  selectedEvent = event;
 
-  if (!confirmDelete) return;
+  document.getElementById("editInfo").innerText =
+    event.title;
 
-  await deleteDoc(doc(db, "availabilities", event.id));
-
-  event.remove();
+  document.getElementById("editModal").classList.remove("hidden");
 }
 
-/* MODAL */
+/* UPDATE */
+async function updateEvent() {
+
+  const start = document.getElementById("editStart").value;
+  const end = document.getElementById("editEnd").value;
+
+  if (!start || !end) {
+    alert("Remplis les heures");
+    return;
+  }
+
+  await deleteDoc(doc(db, "availabilities", selectedEvent.id));
+
+  await addDoc(collection(db, "availabilities"), {
+    player: currentPlayer,
+    date: selectedEvent.startStr,
+    start,
+    end
+  });
+
+  refreshCalendar();
+  closeEditModal();
+}
+
+/* DELETE */
+async function deleteEvent() {
+
+  if (!selectedEvent) return;
+
+  await deleteDoc(doc(db, "availabilities", selectedEvent.id));
+
+  selectedEvent.remove();
+
+  closeEditModal();
+}
+
+/* REFRESH */
+async function refreshCalendar() {
+  calendar.removeAllEvents();
+
+  const refreshed = await loadAll();
+  refreshed.forEach(ev => calendar.addEvent(ev));
+}
+
+/* MODALS */
 function openAvailModal() {
   document.getElementById("availModal").classList.remove("hidden");
 }
@@ -142,7 +189,15 @@ function closeAvailModal() {
   document.getElementById("availModal").classList.add("hidden");
 }
 
-/* clic backdrop */
-window.backdropClose = function(event) {
+function closeEditModal() {
+  document.getElementById("editModal").classList.add("hidden");
+  selectedEvent = null;
+}
+
+window.closeAddBackdrop = function(e) {
   closeAvailModal();
+};
+
+window.closeEditBackdrop = function(e) {
+  closeEditModal();
 };
