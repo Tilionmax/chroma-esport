@@ -37,8 +37,13 @@ document.addEventListener("DOMContentLoaded", async function () {
     dateClick: function(info) {
       selectedDate = info.dateStr;
       openModal();
-      document.getElementById("stats").innerText =
-        "Date : " + selectedDate;
+    },
+
+    eventDidMount: function(info) {
+      if (info.event.extendedProps.dispo) {
+        info.el.title =
+          "Dispo: " + info.event.extendedProps.dispo.join(", ");
+      }
     }
   });
 
@@ -70,9 +75,17 @@ async function saveEvent() {
     return;
   }
 
+  const checkboxes = document.querySelectorAll("input[type='checkbox']");
+  let dispo = [];
+
+  checkboxes.forEach(cb => {
+    if (cb.checked) dispo.push(cb.value);
+  });
+
   const event = {
     title: title,
-    start: selectedDate
+    start: selectedDate,
+    dispo: dispo
   };
 
   await addDoc(collection(db, "events"), event);
@@ -81,6 +94,8 @@ async function saveEvent() {
 
   closeModal();
   document.getElementById("title").value = "";
+
+  checkboxes.forEach(cb => cb.checked = false);
 }
 
 /* MODAL */
