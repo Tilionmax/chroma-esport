@@ -23,7 +23,7 @@
   </div>
 </div>
 
-<!-- POPUP CREATE -->
+<!-- MODAL EVENT -->
 <div id="modal" class="modal hidden">
   <div class="modal-content">
 
@@ -31,29 +31,25 @@
 
     <input id="title" placeholder="Nom de la session">
 
-    <h3>👥 Joueurs disponibles</h3>
-
-    <label><input type="checkbox" value="Maxime"> Maxime</label><br>
-    <label><input type="checkbox" value="Alex"> Alex</label><br>
-    <label><input type="checkbox" value="Leo"> Leo</label><br>
-
     <button id="saveBtn">Créer</button>
     <button id="closeBtn">Annuler</button>
 
   </div>
 </div>
 
-<!-- POPUP EVENT ACTION -->
-<div id="eventModal" class="modal hidden">
+<!-- MODAL DISPONIBILITÉ -->
+<div id="availModal" class="modal hidden">
   <div class="modal-content">
 
-    <h2>📌 Événement</h2>
+    <h2>🕒 Disponibilité joueur</h2>
 
-    <p id="eventTitle"></p>
+    <input id="playerName" placeholder="Nom joueur">
 
-    <button id="deleteBtn">🗑️ Supprimer</button>
-    <button id="newBtn">➕ Créer</button>
-    <button id="cancelBtn2">❌ Annuler</button>
+    <input id="startHour" type="number" placeholder="Heure début (ex: 18)">
+    <input id="endHour" type="number" placeholder="Heure fin (ex: 22)">
+
+    <button id="saveAvailBtn">Valider</button>
+    <button id="closeAvailBtn">Annuler</button>
 
   </div>
 </div>
