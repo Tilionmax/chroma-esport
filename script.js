@@ -27,7 +27,7 @@ let selectedDate = null;
 let selectedDay = null;
 let selectedEvent = null;
 
-/* 🔥 PSEUDO STOCKÉ */
+/* pseudo sauvegardé */
 let currentPlayer = localStorage.getItem("playerName") || "";
 
 /* INIT */
@@ -45,12 +45,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       start: new Date().toISOString().split("T")[0]
     },
 
-    eventTimeFormat: {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    },
-
     dayCellClassNames: (arg) => {
 
       const classes = [];
@@ -61,13 +55,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       const cellDate = new Date(arg.date);
       cellDate.setHours(0,0,0,0);
 
-      if (cellDate < today) {
-        classes.push("past-day");
-      }
-
-      if (selectedDay === arg.dateStr) {
-        classes.push("selected-day");
-      }
+      if (cellDate < today) classes.push("past-day");
+      if (selectedDay === arg.dateStr) classes.push("selected-day");
 
       return classes;
     },
@@ -75,7 +64,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     dateClick: (info) => {
 
       const today = new Date().toISOString().split("T")[0];
-
       if (info.dateStr < today) return;
 
       selectedDate = info.dateStr;
@@ -83,6 +71,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       calendar.render();
 
+      renderWeek();
       openAvailModal();
       renderPlayersForDay();
     },
@@ -105,7 +94,41 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("currentPlayerDisplay").textContent =
       "Connected as: " + currentPlayer;
   }
+
+  renderWeek();
 });
+
+/* WEEK J+7 */
+function renderWeek() {
+
+  const today = new Date();
+
+  let days = [];
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    days.push(d);
+  }
+
+  document.getElementById("weekRange").textContent =
+    `📅 Semaine du ${days[0].toISOString().split("T")[0]} → ${days[6].toISOString().split("T")[0]}`;
+
+  const container = document.getElementById("weekDays");
+  container.innerHTML = "";
+
+  days.forEach(d => {
+    const div = document.createElement("div");
+    div.className = "week-day";
+
+    div.textContent = d.toLocaleDateString("fr-FR", {
+      weekday: "short",
+      day: "2-digit"
+    });
+
+    container.appendChild(div);
+  });
+}
 
 /* LOAD */
 async function loadAll() {
@@ -120,11 +143,7 @@ async function loadAll() {
       id: docSnap.id,
       title: `🟢 ${d.player} (${d.start} - ${d.end})`,
       start: d.date,
-      extendedProps: {
-        player: d.player,
-        start: d.start,
-        end: d.end
-      }
+      extendedProps: d
     });
   });
 
@@ -133,6 +152,7 @@ async function loadAll() {
 
 /* SAVE */
 async function saveAvailability() {
+
   const player = document.getElementById("playerName").value;
   const start = document.getElementById("startHour").value;
   const end = document.getElementById("endHour").value;
@@ -161,12 +181,11 @@ async function saveAvailability() {
 function openEditModal(event) {
 
   if (!currentPlayer) return;
-
   if (event.extendedProps.player !== currentPlayer) return;
 
   selectedEvent = event;
 
-  document.getElementById("editInfo").innerText =
+  document.getElementById("editInfo").textContent =
     `${event.extendedProps.player} • ${event.extendedProps.start} → ${event.extendedProps.end}`;
 
   document.getElementById("editModal").classList.remove("hidden");
@@ -175,16 +194,13 @@ function openEditModal(event) {
 /* UPDATE */
 async function updateEvent() {
 
-  const start = document.getElementById("editStart").value;
-  const end = document.getElementById("editEnd").value;
-
   await deleteDoc(doc(db, "availabilities", selectedEvent.id));
 
   await addDoc(collection(db, "availabilities"), {
     player: currentPlayer,
     date: selectedEvent.startStr,
-    start,
-    end
+    start: document.getElementById("editStart").value,
+    end: document.getElementById("editEnd").value
   });
 
   refreshCalendar();
@@ -203,15 +219,7 @@ async function deleteEvent() {
   closeEditModal();
 }
 
-/* REFRESH */
-async function refreshCalendar() {
-  calendar.removeAllEvents();
-
-  const refreshed = await loadAll();
-  refreshed.forEach(ev => calendar.addEvent(ev));
-}
-
-/* PLAYERS LIST */
+/* PLAYERS */
 async function renderPlayersForDay() {
 
   const list = document.getElementById("playersList");
@@ -223,10 +231,7 @@ async function renderPlayersForDay() {
 
   snapshot.forEach(docSnap => {
     const d = docSnap.data();
-
-    if (d.date === selectedDay) {
-      players.push(d);
-    }
+    if (d.date === selectedDay) players.push(d);
   });
 
   if (players.length === 0) {
@@ -234,19 +239,17 @@ async function renderPlayersForDay() {
     return;
   }
 
-  players.sort((a, b) => a.start.localeCompare(b.start));
+  players.sort((a,b) => a.start.localeCompare(b.start));
 
   list.innerHTML = "";
 
   players.forEach(p => {
     const div = document.createElement("div");
     div.className = "player-card";
-
     div.innerHTML = `
       <span class="player-name">🟢 ${p.player}</span>
       <span class="player-time">${p.start} → ${p.end}</span>
     `;
-
     list.appendChild(div);
   });
 }
@@ -265,11 +268,9 @@ function closeEditModal() {
   selectedEvent = null;
 }
 
-/* RESET PSEUDO */
 function resetPlayer() {
   localStorage.removeItem("playerName");
   currentPlayer = "";
-
   document.getElementById("playerName").value = "";
   document.getElementById("currentPlayerDisplay").textContent = "";
 }
