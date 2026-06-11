@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family: Arial;
-  background: #0f172a;
+  background: #010c2c;
   color: white;
 }
 
@@ -13,7 +13,7 @@ body {
 
 h1 {
   text-align: center;
-  color: #00e5ff;
+  color: #3c9195;
 }
 
 #calendar {
@@ -26,7 +26,7 @@ h1 {
 
 /* jours passés */
 .past-day {
-  background: #1f2937 !important;
+  background: #737373 !important;
   opacity: 0.4;
   pointer-events: none;
 }
@@ -43,7 +43,7 @@ h1 {
 }
 
 .modal-content {
-  background: #1e293b;
+  background: #010c2c;
   padding: 20px;
   border-radius: 10px;
   width: 320px;
