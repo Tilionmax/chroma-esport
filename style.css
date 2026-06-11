@@ -134,3 +134,7 @@ button {
   border: none;
   cursor: pointer;
 }
+#modalPlayerName {
+  font-weight: bold;
+  color: #3c9195;
+}
