@@ -177,3 +177,12 @@ button {
     font-weight: bold !important;
     font-size: 16px !important;
 }
+.edit-btn:hover
+ {
+    background: #ffffff !important;
+    border: none !important;
+    cursor: pointer !important;
+    color: #000000 !important;
+    font-weight: bold !important;
+    font-size: 16px !important;
+}
