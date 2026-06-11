@@ -29,7 +29,7 @@ let selectedEvent = null;
 
 let currentPlayer = localStorage.getItem("playerName") || "";
 
-/* ================= INIT ================= */
+/* INIT */
 document.addEventListener("DOMContentLoaded", async () => {
 
   const calendarEl = document.getElementById("calendar");
@@ -66,30 +66,47 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("closeAvailBtn").addEventListener("click", closeAvailModal);
   document.getElementById("updateBtn").addEventListener("click", updateEvent);
   document.getElementById("deleteBtn").addEventListener("click", deleteEvent);
-  document.getElementById("changePlayerBtn").addEventListener("click", changeUsername);
+  document.getElementById("closeEditBtn").addEventListener("click", closeEditModal);
 
-  updatePlayerUI();
+  document.getElementById("changePlayerBtn").addEventListener("click", openUsernameModal);
+  document.getElementById("saveUsernameBtn").addEventListener("click", saveUsername);
+  document.getElementById("closeUsernameBtn").addEventListener("click", closeUsernameModal);
+
+  updateUI();
   renderWeek();
   renderPlayersForDay();
 });
 
-/* ================= USER ================= */
-function updatePlayerUI() {
+/* USER */
+function updateUI() {
   document.getElementById("playerText").textContent =
     currentPlayer ? `Connected as: ${currentPlayer}` : "";
+
+  document.getElementById("playerName").value = currentPlayer;
 }
 
-function changeUsername() {
-  const name = prompt("Enter username:");
+/* USERNAME MODAL */
+function openUsernameModal() {
+  document.getElementById("usernameModal").classList.remove("hidden");
+  document.getElementById("usernameInput").value = currentPlayer;
+}
+
+function closeUsernameModal() {
+  document.getElementById("usernameModal").classList.add("hidden");
+}
+
+function saveUsername() {
+  const name = document.getElementById("usernameInput").value.trim();
   if (!name) return;
 
   currentPlayer = name;
   localStorage.setItem("playerName", name);
 
-  updatePlayerUI();
+  updateUI();
+  closeUsernameModal();
 }
 
-/* ================= LOAD ================= */
+/* LOAD */
 async function loadAll() {
   const snapshot = await getDocs(collection(db, "availabilities"));
 
@@ -100,7 +117,7 @@ async function loadAll() {
 
     events.push({
       id: docSnap.id,
-      title: `🟢 ${d.player} (${d.start} - ${d.end})`,
+      title: `${d.player} (${d.start}-${d.end})`,
       start: d.date,
       extendedProps: d
     });
@@ -109,7 +126,7 @@ async function loadAll() {
   return events;
 }
 
-/* ================= SAVE ================= */
+/* SAVE */
 async function saveAvailability() {
 
   const player = document.getElementById("playerName").value;
@@ -121,7 +138,7 @@ async function saveAvailability() {
   currentPlayer = player;
   localStorage.setItem("playerName", player);
 
-  updatePlayerUI();
+  updateUI();
 
   await addDoc(collection(db, "availabilities"), {
     player,
@@ -130,20 +147,19 @@ async function saveAvailability() {
     end
   });
 
-  await refresh();
+  refresh();
   closeAvailModal();
 }
 
-/* ================= EDIT ================= */
+/* EDIT */
 function openEditModal(event) {
 
-  if (!currentPlayer) return;
   if (event.extendedProps.player !== currentPlayer) return;
 
   selectedEvent = event;
 
   document.getElementById("editInfo").textContent =
-    `${event.extendedProps.player} • ${event.extendedProps.start} → ${event.extendedProps.end}`;
+    `${event.extendedProps.player} ${event.extendedProps.start}-${event.extendedProps.end}`;
 
   document.getElementById("editStart").value = event.extendedProps.start;
   document.getElementById("editEnd").value = event.extendedProps.end;
@@ -151,10 +167,8 @@ function openEditModal(event) {
   document.getElementById("editModal").classList.remove("hidden");
 }
 
-/* ================= UPDATE ================= */
+/* UPDATE */
 async function updateEvent() {
-
-  if (!selectedEvent) return;
 
   await deleteDoc(doc(db, "availabilities", selectedEvent.id));
 
@@ -165,55 +179,43 @@ async function updateEvent() {
     end: document.getElementById("editEnd").value
   });
 
-  await refresh();
+  refresh();
   closeEditModal();
 }
 
-/* ================= DELETE ================= */
+/* DELETE */
 async function deleteEvent() {
-
-  if (!selectedEvent) return;
 
   await deleteDoc(doc(db, "availabilities", selectedEvent.id));
 
-  await refresh();
+  refresh();
   closeEditModal();
 }
 
-/* ================= REFRESH ================= */
+/* REFRESH */
 async function refresh() {
   calendar.removeAllEvents();
   const data = await loadAll();
   data.forEach(e => calendar.addEvent(e));
+
   renderPlayersForDay();
 }
 
-/* ================= WEEK (7 DAYS) ================= */
+/* WEEK */
 function renderWeek() {
 
   const today = new Date();
   const container = document.getElementById("weekDays");
   container.innerHTML = "";
 
-  const days = [];
-
   for (let i = 0; i < 7; i++) {
     const d = new Date(today);
     d.setDate(today.getDate() + i);
-    days.push(d);
-  }
-
-  document.getElementById("weekRange").textContent =
-    `📅 Semaine du ${days[0].toLocaleDateString("fr-FR")} → ${days[6].toLocaleDateString("fr-FR")}`;
-
-  days.forEach(d => {
 
     const iso = d.toISOString().split("T")[0];
 
     const div = document.createElement("div");
     div.className = "week-day";
-
-    if (iso === selectedDay) div.classList.add("active");
 
     div.textContent = d.toLocaleDateString("fr-FR", {
       weekday: "short",
@@ -222,52 +224,39 @@ function renderWeek() {
 
     div.onclick = () => {
       selectedDay = iso;
-      renderWeek();
       renderPlayersForDay();
     };
 
     container.appendChild(div);
-  });
+  }
 }
 
-/* ================= PLAYERS ================= */
+/* PLAYERS */
 async function renderPlayersForDay() {
 
   const list = document.getElementById("playersList");
-  list.innerHTML = "Loading...";
+  list.innerHTML = "";
 
   const snapshot = await getDocs(collection(db, "availabilities"));
 
-  let players = [];
+  let arr = [];
 
   snapshot.forEach(docSnap => {
     const d = docSnap.data();
-    if (d.date === selectedDay) players.push(d);
+    if (d.date === selectedDay) arr.push(d);
   });
 
-  if (players.length === 0) {
-    list.innerHTML = "Aucun joueur disponible";
-    return;
-  }
+  arr.sort((a,b) => a.start.localeCompare(b.start));
 
-  players.sort((a, b) => a.start.localeCompare(b.start));
-
-  list.innerHTML = "";
-
-  players.forEach(p => {
-    const div = document.createElement("div");
-    div.className = "player-card";
-
-    div.innerHTML = `
-      <span class="player-name">🟢 ${p.player}</span>
-      <span class="player-time">${p.start} → ${p.end}</span>
-    `;
-
-    list.appendChild(div);
-  });
+  list.innerHTML = arr.map(p =>
+    `<div class="player-card">
+      <span class="player-name">${p.player}</span>
+      <span>${p.start} - ${p.end}</span>
+    </div>`
+  ).join("");
 }
 
-/* ================= MODALS ================= */
+/* MODALS */
 function openAvailModal() {
   document.getElementById("availModal").classList.remove("hidden");
 }
