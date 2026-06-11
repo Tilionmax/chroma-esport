@@ -166,3 +166,10 @@ button {
   padding: 6px 12px;
   border-radius: 8px;
 }
+.edit-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+
+  font-size: 16px;
+}
