@@ -24,10 +24,9 @@ const db = getFirestore(app);
 /* VARIABLES */
 let calendar;
 let selectedDate = null;
-let selectedDay = null;
+let selectedDay = new Date().toISOString().split("T")[0];
 let selectedEvent = null;
 
-/* pseudo sauvegardé */
 let currentPlayer = localStorage.getItem("playerName") || "";
 
 /* INIT */
@@ -39,14 +38,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: "dayGridMonth",
-    events: events,
+    events,
 
     validRange: {
       start: new Date().toISOString().split("T")[0]
     },
 
     dayCellClassNames: (arg) => {
-
       const classes = [];
 
       const today = new Date();
@@ -56,7 +54,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       cellDate.setHours(0,0,0,0);
 
       if (cellDate < today) classes.push("past-day");
-      if (selectedDay === arg.dateStr) classes.push("selected-day");
+      if (arg.dateStr === selectedDay) classes.push("selected-day");
 
       return classes;
     },
@@ -70,15 +68,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       selectedDay = info.dateStr;
 
       calendar.render();
-
       renderWeek();
-      openAvailModal();
       renderPlayersForDay();
+      openAvailModal();
     },
 
-    eventClick: (info) => {
-      openEditModal(info.event);
-    }
+    eventClick: (info) => openEditModal(info.event)
   });
 
   calendar.render();
@@ -96,9 +91,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   renderWeek();
+  renderPlayersForDay();
 });
 
-/* WEEK J+7 */
+/* WEEK (J+7) */
 function renderWeek() {
 
   const today = new Date();
@@ -111,20 +107,31 @@ function renderWeek() {
     days.push(d);
   }
 
-  document.getElementById("weekRange").textContent =
-    `📅 Semaine du ${days[0].toISOString().split("T")[0]} → ${days[6].toISOString().split("T")[0]}`;
-
   const container = document.getElementById("weekDays");
   container.innerHTML = "";
 
+  document.getElementById("weekRange").textContent =
+    `📅 Semaine du ${days[0].toISOString().split("T")[0]} → ${days[6].toISOString().split("T")[0]}`;
+
   days.forEach(d => {
+
+    const iso = d.toISOString().split("T")[0];
+
     const div = document.createElement("div");
     div.className = "week-day";
+
+    if (iso === selectedDay) div.classList.add("active");
 
     div.textContent = d.toLocaleDateString("fr-FR", {
       weekday: "short",
       day: "2-digit"
     });
+
+    div.onclick = () => {
+      selectedDay = iso;
+      renderWeek();
+      renderPlayersForDay();
+    };
 
     container.appendChild(div);
   });
@@ -246,10 +253,12 @@ async function renderPlayersForDay() {
   players.forEach(p => {
     const div = document.createElement("div");
     div.className = "player-card";
+
     div.innerHTML = `
       <span class="player-name">🟢 ${p.player}</span>
       <span class="player-time">${p.start} → ${p.end}</span>
     `;
+
     list.appendChild(div);
   });
 }
