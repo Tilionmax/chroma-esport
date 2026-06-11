@@ -10,12 +10,13 @@ import {
 
 /* FIREBASE */
 const firebaseConfig = {
-  apiKey: "TON_API_KEY",
+  apiKey: "AIzaSyBVhYA-HBtN3rG8q0Aj0EfhCsEJ3Nz8jPA",
   authDomain: "chroma-esport.firebaseapp.com",
+  databaseURL: "https://chroma-esport-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "chroma-esport",
-  storageBucket: "chroma-esport.appspot.com",
-  messagingSenderId: "TON_ID",
-  appId: "TON_APP_ID"
+  storageBucket: "chroma-esport.firebasestorage.app",
+  messagingSenderId: "555749328122",
+  appId: "1:555749328122:web:5765da259633ef047e3543"
 };
 
 const app = initializeApp(firebaseConfig);
