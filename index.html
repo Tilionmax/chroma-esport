@@ -19,8 +19,9 @@
 </div>
 
 <!-- MODAL DISPO -->
-<div id="availModal" class="modal hidden">
-  <div class="modal-content">
+<div id="availModal" class="modal hidden" onclick="backdropClose(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+
     <h3>Ajouter disponibilité</h3>
 
     <input id="playerName" placeholder="Pseudo">
@@ -29,6 +30,7 @@
 
     <button id="saveAvailBtn">Valider</button>
     <button id="closeAvailBtn">Fermer</button>
+
   </div>
 </div>
 
