@@ -27,7 +27,7 @@ h1 {
 
 /* jours passés */
 .past-day {
-  background: #737373 !important;
+  background: #424141 !important;
   opacity: 0.0;
   pointer-events: none;
 }
@@ -40,7 +40,7 @@ h1 {
 /* jour actuel */
 .fc-day-today {
   background-color: #3c9195 !important;
-  opacity: 0.4 !important;
+  opacity: 0.1 !important;
 }
 
 /* SEMAINE */
