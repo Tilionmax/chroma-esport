@@ -162,6 +162,7 @@ button {
 .fc .fc-button-primary:focus
  {
     box-shadow: rgb(76 91 106 / 0%) 0px 0px 0px 0.2rem !important;
+ }
 
 :root {   
    --fc-neutral-bg-color: hsl(0deg 0% 0% / 51%);
