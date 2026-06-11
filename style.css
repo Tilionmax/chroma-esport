@@ -1,66 +1,27 @@
 body {
   margin: 0;
   font-family: Arial;
-  background: #0b0f19;
+  background: #0f172a;
   color: white;
 }
 
-/* APP LAYOUT */
-.app {
-  display: flex;
-  height: 100vh;
-}
-
-/* SIDEBAR DISCORD */
-.sidebar {
-  width: 220px;
-  background: #111827;
-  padding: 20px;
-  border-right: 1px solid #1f2937;
-}
-
-.sidebar h2 {
-  color: #5865f2;
-}
-
-.nav {
-  padding: 10px;
-  margin-top: 10px;
-  background: #1f2937;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.nav:hover {
-  background: #2b2f3a;
-}
-
-/* MAIN */
-.main {
-  flex: 1;
+.container {
+  max-width: 1400px;
+  margin: auto;
   padding: 20px;
 }
 
 h1 {
-  color: #ffffff;
+  text-align: center;
+  color: #00e5ff;
 }
 
-/* CALENDAR */
 #calendar {
-  background: #ffffff;
+  background: white;
   color: black;
   padding: 15px;
   border-radius: 10px;
   min-height: 850px;
-}
-
-/* EVENTS STYLE DISCORD */
-.fc-event {
-  border: none !important;
-  border-radius: 6px !important;
-  padding: 4px !important;
-  background: #5865f2 !important;
-  color: white !important;
 }
 
 /* MODAL */
@@ -75,7 +36,7 @@ h1 {
 }
 
 .modal-content {
-  background: #111827;
+  background: #1e293b;
   padding: 20px;
   border-radius: 10px;
   width: 320px;
@@ -89,18 +50,12 @@ input {
   width: 100%;
   padding: 10px;
   margin: 10px 0;
-  background: #1f2937;
-  color: white;
-  border: none;
-  border-radius: 6px;
 }
 
 button {
   padding: 10px;
   margin: 5px;
   border: none;
-  border-radius: 6px;
+  border-radius: 5px;
   cursor: pointer;
-  background: #5865f2;
-  color: white;
 }
