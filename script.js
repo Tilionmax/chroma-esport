@@ -3,10 +3,12 @@ import {
   getFirestore,
   collection,
   addDoc,
-  getDocs
+  getDocs,
+  deleteDoc,
+  doc
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-/* 🔥 CONFIG FIREBASE */
+/* 🔥 FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "TON_API_KEY",
   authDomain: "chroma-esport.firebaseapp.com",
@@ -19,8 +21,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+/* VARIABLES */
 let calendar;
 let selectedDate = null;
+let selectedEvent = null;
 
 /* INIT */
 document.addEventListener("DOMContentLoaded", async function () {
@@ -39,6 +43,15 @@ document.addEventListener("DOMContentLoaded", async function () {
       openModal();
     },
 
+    eventClick: function(info) {
+      selectedEvent = info.event;
+
+      document.getElementById("eventTitle").innerText =
+        "📌 " + info.event.title;
+
+      openEventModal();
+    },
+
     eventDidMount: function(info) {
       if (info.event.extendedProps.dispo) {
         info.el.title =
@@ -49,8 +62,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   calendar.render();
 
+  /* BUTTONS CREATE */
   document.getElementById("saveBtn").addEventListener("click", saveEvent);
   document.getElementById("closeBtn").addEventListener("click", closeModal);
+
+  /* BUTTONS EVENT */
+  document.getElementById("deleteBtn").addEventListener("click", deleteEvent);
+  document.getElementById("cancelBtn2").addEventListener("click", closeEventModal);
+  document.getElementById("newBtn").addEventListener("click", () => {
+    closeEventModal();
+    openModal();
+  });
 });
 
 /* LOAD EVENTS */
@@ -60,7 +82,10 @@ async function loadEvents() {
   let events = [];
 
   snapshot.forEach(doc => {
-    events.push(doc.data());
+    events.push({
+      id: doc.id,
+      ...doc.data()
+    });
   });
 
   return events;
@@ -70,10 +95,7 @@ async function loadEvents() {
 async function saveEvent() {
   const title = document.getElementById("title").value;
 
-  if (!title) {
-    alert("Nom requis");
-    return;
-  }
+  if (!title) return alert("Nom requis");
 
   const checkboxes = document.querySelectorAll("input[type='checkbox']");
   let dispo = [];
@@ -98,7 +120,18 @@ async function saveEvent() {
   checkboxes.forEach(cb => cb.checked = false);
 }
 
-/* MODAL */
+/* DELETE EVENT */
+async function deleteEvent() {
+  if (!selectedEvent) return;
+
+  await deleteDoc(doc(db, "events", selectedEvent.id));
+
+  selectedEvent.remove();
+
+  closeEventModal();
+}
+
+/* MODALS */
 function openModal() {
   document.getElementById("modal").classList.remove("hidden");
 }
@@ -107,13 +140,24 @@ function closeModal() {
   document.getElementById("modal").classList.add("hidden");
 }
 
+function openEventModal() {
+  document.getElementById("eventModal").classList.remove("hidden");
+}
+
+function closeEventModal() {
+  document.getElementById("eventModal").classList.add("hidden");
+}
+
 /* CLICK OUTSIDE */
 document.addEventListener("click", function (e) {
   const modal = document.getElementById("modal");
+  const eventModal = document.getElementById("eventModal");
 
-  if (modal.classList.contains("hidden")) return;
-
-  if (e.target === modal) {
+  if (!modal.classList.contains("hidden") && e.target === modal) {
     closeModal();
+  }
+
+  if (!eventModal.classList.contains("hidden") && e.target === eventModal) {
+    closeEventModal();
   }
 });
