@@ -139,12 +139,4 @@ button {
   font-weight: bold;
   color: #3c9195;
 }
-.fc .fc-button-primary {
-    background-color: #3c9195;
-    border-color: #ffffff;
-    color: #ffffff;
-}
-:root {
-    --fc-today-bg-color: #3c91957d;
-    
 }
