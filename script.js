@@ -10,13 +10,12 @@ import {
 
 /* FIREBASE */
 const firebaseConfig = {
-  apiKey: "AIzaSyBVhYA-HBtN3rG8q0Aj0EfhCsEJ3Nz8jPA",
+  apiKey: "TON_API_KEY",
   authDomain: "chroma-esport.firebaseapp.com",
-  databaseURL: "https://chroma-esport-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "chroma-esport",
-  storageBucket: "chroma-esport.firebasestorage.app",
-  messagingSenderId: "555749328122",
-  appId: "1:555749328122:web:5765da259633ef047e3543"
+  storageBucket: "chroma-esport.appspot.com",
+  messagingSenderId: "TON_ID",
+  appId: "TON_APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -39,14 +38,40 @@ document.addEventListener("DOMContentLoaded", async () => {
     initialView: "dayGridMonth",
     events: events,
 
-    /* affichage propre heure */
+    /* 🔥 INTERDIT DATES PASSÉES */
+    validRange: {
+      start: new Date().toISOString().split("T")[0]
+    },
+
     eventTimeFormat: {
       hour: '2-digit',
       minute: '2-digit',
       hour12: false
     },
 
+    /* 🩶 GRISER JOURS PASSÉS */
+    dayCellClassNames: (arg) => {
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      const cellDate = new Date(arg.date);
+      cellDate.setHours(0,0,0,0);
+
+      if (cellDate < today) {
+        return ["past-day"];
+      }
+      return [];
+    },
+
     dateClick: (info) => {
+
+      const today = new Date().toISOString().split("T")[0];
+
+      if (info.dateStr < today) {
+        alert("Impossible de choisir une date passée");
+        return;
+      }
+
       selectedDate = info.dateStr;
       openAvailModal();
     },
@@ -63,21 +88,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("updateBtn").addEventListener("click", updateEvent);
   document.getElementById("deleteBtn").addEventListener("click", deleteEvent);
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      closeAvailModal();
-      closeEditModal();
-    }
-  });
 });
 
-/* VALID TIME */
-function isValidTime(time) {
-  return /^([01]\d|2[0-3]):([0-5]\d)$/.test(time);
-}
-
-/* LOAD FIRESTORE */
+/* LOAD */
 async function loadAll() {
   const snapshot = await getDocs(collection(db, "availabilities"));
 
@@ -112,11 +125,6 @@ async function saveAvailability() {
     return;
   }
 
-  if (!isValidTime(start) || !isValidTime(end)) {
-    alert("Format HH:MM requis (ex: 15:30)");
-    return;
-  }
-
   currentPlayer = player;
 
   await addDoc(collection(db, "availabilities"), {
@@ -130,17 +138,15 @@ async function saveAvailability() {
   closeAvailModal();
 }
 
-/* OPEN EDIT */
+/* EDIT */
 function openEditModal(event) {
 
-  const eventPlayer = event.extendedProps.player;
-
   if (!currentPlayer) {
-    alert("Entre ton pseudo d'abord");
+    alert("Entre ton pseudo");
     return;
   }
 
-  if (eventPlayer !== currentPlayer) {
+  if (event.extendedProps.player !== currentPlayer) {
     alert("Tu ne peux modifier que tes disponibilités");
     return;
   }
@@ -148,10 +154,7 @@ function openEditModal(event) {
   selectedEvent = event;
 
   document.getElementById("editInfo").innerText =
-    `${eventPlayer} • ${event.extendedProps.start} → ${event.extendedProps.end}`;
-
-  document.getElementById("editStart").value = event.extendedProps.start;
-  document.getElementById("editEnd").value = event.extendedProps.end;
+    `${event.extendedProps.player} • ${event.extendedProps.start} → ${event.extendedProps.end}`;
 
   document.getElementById("editModal").classList.remove("hidden");
 }
@@ -161,11 +164,6 @@ async function updateEvent() {
 
   const start = document.getElementById("editStart").value;
   const end = document.getElementById("editEnd").value;
-
-  if (!isValidTime(start) || !isValidTime(end)) {
-    alert("HH:MM requis");
-    return;
-  }
 
   await deleteDoc(doc(db, "availabilities", selectedEvent.id));
 
@@ -182,8 +180,6 @@ async function updateEvent() {
 
 /* DELETE */
 async function deleteEvent() {
-
-  if (!selectedEvent) return;
 
   await deleteDoc(doc(db, "availabilities", selectedEvent.id));
 
@@ -215,10 +211,5 @@ function closeEditModal() {
 }
 
 /* BACKDROP */
-window.closeAddBackdrop = function(e) {
-  closeAvailModal();
-};
-
-window.closeEditBackdrop = function(e) {
-  closeEditModal();
-};
+window.closeAddBackdrop = () => closeAvailModal();
+window.closeEditBackdrop = () => closeEditModal();
