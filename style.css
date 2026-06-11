@@ -40,7 +40,7 @@ h1 {
 /* jour actuel */
 .fc-day-today {
   background-color: #3c9195 !important;
-  opacity: 0.1 !important;
+  opacity: 0.8 !important;
 }
 
 /* SEMAINE */
