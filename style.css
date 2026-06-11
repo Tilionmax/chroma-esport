@@ -31,7 +31,6 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
 }
 
 .modal-content {
@@ -42,7 +41,7 @@ h1 {
 }
 
 .hidden {
-  display: none !important;
+  display: none;
 }
 
 input {
@@ -56,5 +55,4 @@ button {
   margin: 5px;
   border: none;
   border-radius: 5px;
-  cursor: pointer;
 }
