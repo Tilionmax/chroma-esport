@@ -33,38 +33,24 @@
 
   <!-- PLAYERS -->
   <div class="stats">
-    <h3>🟢 Available player</h3>
+    <h3>🟢 Available players</h3>
     <div id="playersList">Clique sur un jour</div>
   </div>
 
 </div>
 
-<!-- MODAL AVAILABILITY -->
+<!-- ADD MODAL -->
 <div id="availModal" class="modal hidden" onclick="closeAddBackdrop(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
 
     <h3>Add availability</h3>
 
     <input id="playerName" placeholder="Username">
-    <input id="startHour" placeholder="HH:MM">
-    <input id="endHour" placeholder="HH:MM">
+    <input id="startHour" placeholder="Start HH:MM">
+    <input id="endHour" placeholder="End HH:MM">
 
     <button id="saveAvailBtn">Save</button>
     <button id="closeAvailBtn">Close</button>
-
-  </div>
-</div>
-
-<!-- MODAL USERNAME -->
-<div id="userModal" class="modal hidden" onclick="closeUserBackdrop(event)">
-  <div class="modal-content" onclick="event.stopPropagation()">
-
-    <h3>Change username</h3>
-
-    <input id="newUsername" placeholder="New username">
-
-    <button id="saveUserBtn">Save</button>
-    <button id="closeUserBtn">Close</button>
 
   </div>
 </div>
@@ -82,7 +68,21 @@
 
     <button id="updateBtn">Edit</button>
     <button id="deleteBtn">Delete</button>
-    <button onclick="closeEditModal()">Close</button>
+    <button id="closeEditBtn">Close</button>
+
+  </div>
+</div>
+
+<!-- USERNAME MODAL -->
+<div id="usernameModal" class="modal hidden" onclick="closeUsernameBackdrop(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+
+    <h3>Change username</h3>
+
+    <input id="usernameInput" placeholder="Enter username">
+
+    <button id="saveUsernameBtn">Save</button>
+    <button id="closeUsernameBtn">Close</button>
 
   </div>
 </div>
