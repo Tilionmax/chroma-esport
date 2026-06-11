@@ -68,7 +68,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       selectedDay = info.dateStr;
 
       calendar.render();
-
       renderWeek();
       renderPlayersForDay();
       openAvailModal();
@@ -79,11 +78,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   calendar.render();
 
+  /* EVENTS */
   document.getElementById("saveAvailBtn").addEventListener("click", saveAvailability);
   document.getElementById("closeAvailBtn").addEventListener("click", closeAvailModal);
+
   document.getElementById("updateBtn").addEventListener("click", updateEvent);
   document.getElementById("deleteBtn").addEventListener("click", deleteEvent);
 
+  document.getElementById("changePlayerBtn").addEventListener("click", resetPlayer);
+
+  /* BACKDROP CLICK FIX */
+  window.closeAddBackdrop = (e) => {
+    if (e.target.id === "availModal") closeAvailModal();
+  };
+
+  window.closeEditBackdrop = (e) => {
+    if (e.target.id === "editModal") closeEditModal();
+  };
+
+  /* PSEUDO UI */
   if (currentPlayer) {
     document.getElementById("playerName").value = currentPlayer;
     document.getElementById("currentPlayerDisplay").textContent =
@@ -94,7 +107,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderPlayersForDay();
 });
 
-/* 📅 FORMAT DATE FR */
+/* 📅 FORMAT FR */
 const formatFR = (date) =>
   date.toLocaleDateString("fr-FR", {
     day: "2-digit",
@@ -145,7 +158,7 @@ function renderWeek() {
   });
 }
 
-/* 🔥 LOAD */
+/* LOAD */
 async function loadAll() {
   const snapshot = await getDocs(collection(db, "availabilities"));
 
@@ -165,7 +178,7 @@ async function loadAll() {
   return events;
 }
 
-/* 💾 SAVE */
+/* SAVE */
 async function saveAvailability() {
 
   const player = document.getElementById("playerName").value;
@@ -180,34 +193,26 @@ async function saveAvailability() {
   document.getElementById("currentPlayerDisplay").textContent =
     "Connected as: " + player;
 
-  try {
-    await addDoc(collection(db, "availabilities"), {
-      player,
-      date: selectedDate,
-      start,
-      end
-    });
+  await addDoc(collection(db, "availabilities"), {
+    player,
+    date: selectedDate,
+    start,
+    end
+  });
 
-    // 🔥 refresh UI direct
-    calendar.removeAllEvents();
+  calendar.removeAllEvents();
+  const refreshed = await loadAll();
+  refreshed.forEach(ev => calendar.addEvent(ev));
 
-    const refreshed = await loadAll();
-    refreshed.forEach(ev => calendar.addEvent(ev));
-
-    renderPlayersForDay();
-
-    // 🔥 fermeture popup
-    closeAvailModal();
-
-  } catch (e) {
-    console.error(e);
-  }
+  renderPlayersForDay();
+  closeAvailModal();
 }
 
-/* ✏️ EDIT */
+/* EDIT OPEN */
 function openEditModal(event) {
 
   if (!currentPlayer) return;
+
   if (event.extendedProps.player !== currentPlayer) return;
 
   selectedEvent = event;
@@ -218,7 +223,7 @@ function openEditModal(event) {
   document.getElementById("editModal").classList.remove("hidden");
 }
 
-/* 🔄 UPDATE */
+/* UPDATE */
 async function updateEvent() {
 
   await deleteDoc(doc(db, "availabilities", selectedEvent.id));
@@ -231,7 +236,6 @@ async function updateEvent() {
   });
 
   calendar.removeAllEvents();
-
   const refreshed = await loadAll();
   refreshed.forEach(ev => calendar.addEvent(ev));
 
@@ -239,7 +243,7 @@ async function updateEvent() {
   closeEditModal();
 }
 
-/* ❌ DELETE */
+/* DELETE */
 async function deleteEvent() {
 
   await deleteDoc(doc(db, "availabilities", selectedEvent.id));
@@ -250,7 +254,16 @@ async function deleteEvent() {
   closeEditModal();
 }
 
-/* 👥 PLAYERS LIST */
+/* RESET USERNAME */
+function resetPlayer() {
+  localStorage.removeItem("playerName");
+  currentPlayer = "";
+
+  document.getElementById("playerName").value = "";
+  document.getElementById("currentPlayerDisplay").textContent = "";
+}
+
+/* PLAYERS LIST */
 async function renderPlayersForDay() {
 
   const list = document.getElementById("playersList");
@@ -287,7 +300,7 @@ async function renderPlayersForDay() {
   });
 }
 
-/* 📌 MODALS */
+/* MODALS */
 function openAvailModal() {
   document.getElementById("availModal").classList.remove("hidden");
 }
