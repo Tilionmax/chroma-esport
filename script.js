@@ -50,17 +50,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     },
 
     dayCellClassNames: (arg) => {
-      const today = new Date();
-      today.setHours(0,0,0,0);
 
-      const cellDate = new Date(arg.date);
-      cellDate.setHours(0,0,0,0);
+  const classes = [];
 
-      if (cellDate < today) {
-        return ["past-day"];
-      }
-      return [];
-    },
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  const cellDate = new Date(arg.date);
+  cellDate.setHours(0,0,0,0);
+
+  if (cellDate < today) {
+    classes.push("past-day");
+  }
+
+  if (selectedDay === arg.dateStr) {
+    classes.push("selected-day");
+  }
+
+  return classes;
+},
 
     dateClick: (info) => {
 
@@ -72,10 +80,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       selectedDate = info.dateStr;
-      selectedDay = info.dateStr;
+selectedDay = info.dateStr;
 
-      openAvailModal();
-      renderPlayersForDay();
+calendar.render();
+
+openAvailModal();
+renderPlayersForDay();
     },
 
     eventClick: (info) => {
