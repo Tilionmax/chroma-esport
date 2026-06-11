@@ -25,8 +25,10 @@
     <h3>Ajouter disponibilité</h3>
 
     <input id="playerName" placeholder="Pseudo">
-    <input id="startHour" type="time">
-    <input id="endHour" type="time">
+
+    <!-- 👇 INPUT SIMPLE (PAS DE HORLOGE MOBILE) -->
+    <input id="startHour" placeholder="HH:MM" inputmode="numeric">
+    <input id="endHour" placeholder="HH:MM" inputmode="numeric">
 
     <button id="saveAvailBtn">Valider</button>
     <button id="closeAvailBtn">Fermer</button>
@@ -42,8 +44,8 @@
 
     <p id="editInfo"></p>
 
-    <input id="editStart" type="time">
-    <input id="editEnd" type="time">
+    <input id="editStart" placeholder="HH:MM">
+    <input id="editEnd" placeholder="HH:MM">
 
     <button id="updateBtn">Modifier</button>
     <button id="deleteBtn">Supprimer</button>
