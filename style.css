@@ -146,9 +146,15 @@ button {
   font-weight: bold;
   color: #3c9195;
 }
-.fc .fc-button-primary:disabled {
+
+ fc-button-group{
     background-color: #3c9195;
     border-color: #3c9195;
     color: #000000;
     font-weight: bold;
 }
+.fc .fc-button:hover {
+    background-color: #00d3dd !important;
+    border-color: #00d3dd !important;
+}
+
