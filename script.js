@@ -29,7 +29,7 @@ let selectedEvent = null;
 
 let currentPlayer = localStorage.getItem("playerName") || "";
 
-/* INIT */
+/* ================= INIT ================= */
 document.addEventListener("DOMContentLoaded", async () => {
 
   const calendarEl = document.getElementById("calendar");
@@ -52,7 +52,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       selectedDate = info.dateStr;
       selectedDay = info.dateStr;
 
-      calendar.render();
       renderWeek();
       renderPlayersForDay();
       openAvailModal();
@@ -70,7 +69,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("deleteBtn").addEventListener("click", deleteEvent);
   document.getElementById("changePlayerBtn").addEventListener("click", resetPlayer);
 
-  /* BACKDROP CLICK FIX */
+  /* BACKDROP */
   window.closeAddBackdrop = (e) => {
     if (e.target.id === "availModal") closeAvailModal();
   };
@@ -79,20 +78,34 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (e.target.id === "editModal") closeEditModal();
   };
 
-  /* EXPOSE FUNCTIONS (IMPORTANT MODULE FIX) */
   window.closeEditModal = closeEditModal;
 
-  if (currentPlayer) {
-    document.getElementById("playerName").value = currentPlayer;
-    document.getElementById("currentPlayerDisplay").textContent =
-      "Connected as: " + currentPlayer;
-  }
+  updatePlayerUI();
 
   renderWeek();
   renderPlayersForDay();
 });
 
-/* WEEK */
+/* ================= UI USER ================= */
+function updatePlayerUI() {
+  const display = document.getElementById("currentPlayerDisplay");
+  const input = document.getElementById("playerName");
+
+  if (!currentPlayer) {
+    if (display) display.textContent = "";
+    return;
+  }
+
+  if (display) {
+    display.textContent = "Connected as: " + currentPlayer;
+  }
+
+  if (input) {
+    input.value = currentPlayer;
+  }
+}
+
+/* ================= WEEK ================= */
 function renderWeek() {
 
   const today = new Date();
@@ -134,7 +147,7 @@ function renderWeek() {
   });
 }
 
-/* LOAD */
+/* ================= LOAD ================= */
 async function loadAll() {
   const snapshot = await getDocs(collection(db, "availabilities"));
 
@@ -154,7 +167,7 @@ async function loadAll() {
   return events;
 }
 
-/* SAVE */
+/* ================= SAVE ================= */
 async function saveAvailability() {
 
   const player = document.getElementById("playerName").value;
@@ -165,6 +178,8 @@ async function saveAvailability() {
 
   currentPlayer = player;
   localStorage.setItem("playerName", player);
+
+  updatePlayerUI();
 
   await addDoc(collection(db, "availabilities"), {
     player,
@@ -181,7 +196,7 @@ async function saveAvailability() {
   closeAvailModal();
 }
 
-/* EDIT */
+/* ================= EDIT ================= */
 function openEditModal(event) {
 
   if (!currentPlayer) return;
@@ -195,7 +210,7 @@ function openEditModal(event) {
   document.getElementById("editModal").classList.remove("hidden");
 }
 
-/* UPDATE */
+/* ================= UPDATE ================= */
 async function updateEvent() {
 
   await deleteDoc(doc(db, "availabilities", selectedEvent.id));
@@ -215,7 +230,7 @@ async function updateEvent() {
   closeEditModal();
 }
 
-/* DELETE */
+/* ================= DELETE ================= */
 async function deleteEvent() {
 
   await deleteDoc(doc(db, "availabilities", selectedEvent.id));
@@ -226,15 +241,15 @@ async function deleteEvent() {
   closeEditModal();
 }
 
-/* RESET USER */
+/* ================= RESET PLAYER ================= */
 function resetPlayer() {
   localStorage.removeItem("playerName");
   currentPlayer = "";
-  document.getElementById("playerName").value = "";
-  document.getElementById("currentPlayerDisplay").textContent = "";
+
+  updatePlayerUI();
 }
 
-/* PLAYERS */
+/* ================= PLAYERS ================= */
 async function renderPlayersForDay() {
 
   const list = document.getElementById("playersList");
@@ -271,7 +286,7 @@ async function renderPlayersForDay() {
   });
 }
 
-/* MODALS */
+/* ================= MODALS ================= */
 function openAvailModal() {
   document.getElementById("availModal").classList.remove("hidden");
 }
