@@ -137,11 +137,6 @@ button {
   font-weight: bold;
 }
 
-.edit-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-}
 #modalPlayerName {
   font-weight: bold;
   color: #3c9195;
@@ -153,18 +148,31 @@ button {
     color: #000000 !important;
     font-weight: bold !important;
 }
+
 .fc .fc-button:hover {
     background-color: #00d3dd !important;
     border-color: #00d3dd !important;
 }
+
 .fc .fc-button:disabled{
 
     opacity: 1 !important;
 }
+
 .fc .fc-button-primary:focus
  {
     box-shadow: rgb(76 91 106 / 0%) 0px 0px 0px 0.2rem !important;
 
 :root {   
    --fc-neutral-bg-color: hsl(0deg 0% 0% / 51%);
+}
+   
+.edit-btn
+ {
+    background: #010c2c;
+    border: none;
+    cursor: pointer;
+    color: #3c9195;
+    font-weight: bold;
+    font-size: 16px;
 }
