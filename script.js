@@ -27,6 +27,7 @@ let selectedDate = null;
 let selectedDay = new Date().toISOString().split("T")[0];
 let selectedEvent = null;
 
+/* PSEUDO */
 let currentPlayer = localStorage.getItem("playerName") || "";
 
 /* INIT */
@@ -68,6 +69,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       selectedDay = info.dateStr;
 
       calendar.render();
+
       renderWeek();
       renderPlayersForDay();
       openAvailModal();
@@ -94,7 +96,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderPlayersForDay();
 });
 
-/* WEEK (J+7) */
+/* WEEK */
 function renderWeek() {
 
   const today = new Date();
@@ -182,7 +184,7 @@ async function saveAvailability() {
   refreshCalendar();
   renderPlayersForDay();
 
-  // 🔥 IMPORTANT : fermer popup après save
+  // ✅ FIX : fermeture popup
   closeAvailModal();
 }
 
