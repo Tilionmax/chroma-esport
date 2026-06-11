@@ -1,56 +1,44 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Chroma Esport Planning</title>
-
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Chroma Esport Calendar</title>
 
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <div class="container">
-  <h1>📅 Chroma Esport Planning</h1>
+  <h1>Chroma Esport - Planning</h1>
 
   <div id="calendar"></div>
-
-  <div class="stats">
-    <h3>📊 Infos</h3>
-    <div id="stats">Clique sur une date</div>
-  </div>
 </div>
 
-<!-- MODAL EVENT -->
+<!-- EVENT MODAL -->
 <div id="modal" class="modal hidden">
   <div class="modal-content">
-
-    <h2>➕ Créer un entraînement</h2>
-
-    <input id="title" placeholder="Nom de la session">
-
+    <h3>Créer event</h3>
+    <input id="title" placeholder="Nom event">
     <button id="saveBtn">Créer</button>
-    <button id="closeBtn">Annuler</button>
-
+    <button id="closeBtn">Fermer</button>
   </div>
 </div>
 
-<!-- MODAL DISPONIBILITÉ -->
+<!-- DISPO MODAL -->
 <div id="availModal" class="modal hidden">
   <div class="modal-content">
+    <h3>Disponibilité</h3>
 
-    <h2>🕒 Disponibilité joueur</h2>
-
-    <input id="playerName" placeholder="Nom joueur">
-
-    <input id="startHour" type="number" placeholder="Heure début (ex: 18)">
-    <input id="endHour" type="number" placeholder="Heure fin (ex: 22)">
+    <input id="playerName" placeholder="Pseudo">
+    <input id="startHour" type="time">
+    <input id="endHour" type="time">
 
     <button id="saveAvailBtn">Valider</button>
-    <button id="closeAvailBtn">Annuler</button>
-
+    <button id="closeAvailBtn">Fermer</button>
   </div>
 </div>
 
