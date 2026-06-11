@@ -1,118 +1,50 @@
-import { db, collection, addDoc, onSnapshot } from "./firebase.js";
-
-// 👥 joueurs
-const players = ["Joueur 1", "Joueur 2", "Joueur 3", "Joueur 4"];
-
-let selectedDate = null;
 let calendar;
+let selectedDate = null;
 
-// 🔔 DISCORD WEBHOOK
-const DISCORD_WEBHOOK = "https://discord.com/api/webhooks/XXX";
+document.addEventListener("DOMContentLoaded", function () {
 
-document.addEventListener("DOMContentLoaded", () => {
+  const calendarEl = document.getElementById("calendar");
 
-  calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
+  calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: "dayGridMonth",
-    dateClick: (info) => openModal(info.dateStr),
+    selectable: true,
+
+    dateClick: function(info) {
+      selectedDate = info.dateStr;
+      openModal();
+      document.getElementById("stats").innerText = "Date sélectionnée : " + selectedDate;
+    },
+
     events: []
   });
 
   calendar.render();
-
-  // 🔥 LIVE FIRESTORE
-  onSnapshot(collection(db, "events"), (snapshot) => {
-
-    const events = [];
-
-    snapshot.forEach(doc => {
-      events.push(doc.data());
-    });
-
-    calendar.removeAllEvents();
-    calendar.addEventSource(events);
-  });
 });
 
-// 📌 OPEN MODAL
-function openModal(date) {
-  selectedDate = date;
-
+// MODAL
+function openModal() {
   document.getElementById("modal").classList.remove("hidden");
-
-  const container = document.getElementById("players");
-  container.innerHTML = "";
-
-  players.forEach(name => {
-    container.innerHTML += `
-      <div class="player">
-        <span>${name}</span>
-        <input type="checkbox" value="${name}">
-      </div>
-    `;
-  });
 }
 
-// ❌ CLOSE
 function closeModal() {
   document.getElementById("modal").classList.add("hidden");
 }
 
-// 💾 SAVE EVENT FIREBASE
-async function saveEvent() {
-
+// EVENTS
+function saveEvent() {
   const title = document.getElementById("title").value;
 
-  const checked = [...document.querySelectorAll("#players input:checked")]
-    .map(e => e.value);
+  if (!title) return alert("Nom requis");
 
-  if (!title || !selectedDate) return;
-
-  const event = {
-    title: `${title} (${checked.length} joueurs)`,
-    start: selectedDate,
-    allDay: true,
-    players: checked,
-    color: getColor(checked.length)
-  };
-
-  // ☁️ FIRESTORE
-  await addDoc(collection(db, "events"), event);
-
-  // 🔔 DISCORD NOTIF
-  sendDiscord(event);
+  calendar.addEvent({
+    title: title,
+    start: selectedDate
+  });
 
   closeModal();
+  document.getElementById("title").value = "";
 }
 
-// 🎨 COLOR SYSTEM
-function getColor(count) {
-  if (count >= 3) return "green";
-  if (count >= 2) return "orange";
-  return "red";
-}
-
-// 🔔 DISCORD
-function sendDiscord(event) {
-  fetch(DISCORD_WEBHOOK, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      content: `📅 Nouveau entraînement : **${event.title}** le ${event.start}`
-    })
-  });
-}
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-
-const firebaseConfig = {
-  apiKey: "XXX",
-  authDomain: "chroma-esport.firebaseapp.com",
-  projectId: "chroma-esport",
-  storageBucket: "chroma-esport.appspot.com",
-  messagingSenderId: "555749328122",
-  appId: "1:555749328122:web:5765da259633ef047e3543"
-};
-
-const app = initializeApp(firebaseConfig);
-
-console.log("Firebase OK");
+// BUTTONS (IMPORTANT)
+document.getElementById("saveBtn").addEventListener("click", saveEvent);
+document.getElementById("closeBtn").addEventListener("click", closeModal);
