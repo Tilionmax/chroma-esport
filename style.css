@@ -122,11 +122,12 @@ button {
 #currentPlayerDisplay {
   text-align: center;
   margin-bottom: 10px;
-  font-size: 18px;
+  font-size: 22px;
   background: #3c9195;
-  color: black;
+  color: #010c2c;
   padding: 6px;
   border-radius: 8px;
+  font-weight: bold;
 }
 
 .edit-btn {
