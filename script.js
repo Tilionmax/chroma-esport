@@ -202,9 +202,19 @@ function renderWeek() {
 
   const today = new Date();
   const container = document.getElementById("weekDays");
+
   container.innerHTML = "";
 
+  const start = new Date(today);
+  const end = new Date(today);
+
+  end.setDate(end.getDate() + 6);
+
+  document.getElementById("weekRange").textContent =
+    `📅 Semaine du ${start.toLocaleDateString("fr-FR")} → ${end.toLocaleDateString("fr-FR")}`;
+
   for (let i = 0; i < 7; i++) {
+
     const d = new Date(today);
     d.setDate(today.getDate() + i);
 
@@ -213,6 +223,10 @@ function renderWeek() {
     const div = document.createElement("div");
     div.className = "week-day";
 
+    if (iso === selectedDay) {
+      div.classList.add("active");
+    }
+
     div.textContent = d.toLocaleDateString("fr-FR", {
       weekday: "short",
       day: "2-digit"
@@ -220,6 +234,7 @@ function renderWeek() {
 
     div.onclick = () => {
       selectedDay = iso;
+      renderWeek(); // met à jour le surlignage
       renderPlayersForDay();
     };
 
