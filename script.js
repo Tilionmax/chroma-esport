@@ -129,16 +129,12 @@ async function loadAll() {
 /* SAVE */
 async function saveAvailability() {
 
-  const player = document.getElementById("playerName").value;
+  const player = currentPlayer;
   const start = document.getElementById("startHour").value;
   const end = document.getElementById("endHour").value;
 
   if (!player || !start || !end) return;
 
-  currentPlayer = player;
-  localStorage.setItem("playerName", player);
-
-  updateUI();
 
   await addDoc(collection(db, "availabilities"), {
     player,
@@ -259,6 +255,10 @@ async function renderPlayersForDay() {
 /* MODALS */
 function openAvailModal() {
   document.getElementById("availModal").classList.remove("hidden");
+
+  // affiche le pseudo dans la popup
+  document.getElementById("modalPlayerName").textContent =
+    currentPlayer || "No username";
 }
 
 function closeAvailModal() {
