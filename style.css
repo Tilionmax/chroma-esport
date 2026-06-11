@@ -147,11 +147,11 @@ button {
 #currentPlayerDisplay {
   text-align: center;
   margin-bottom: 10px;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 600;
-  color: #3c9195;
-  background: rgba(60, 145, 149, 0.1);
-  display: inline-block;
+  color: #010c2c;
+  background: #3c9195;
+  display: block;
   padding: 6px 12px;
   border-radius: 8px;
 }
