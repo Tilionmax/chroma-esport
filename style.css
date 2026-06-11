@@ -157,4 +157,7 @@ button {
     background-color: #00d3dd !important;
     border-color: #00d3dd !important;
 }
+.fc .fc-button:disabled{
 
+    opacity: 1 !important;
+}
