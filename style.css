@@ -1,42 +1,126 @@
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #0f172a;
-  color: white;
-  text-align: center;
+// 👥 JOUEURS
+const players = [
+  "Joueur 1",
+  "Joueur 2",
+  "Joueur 3",
+  "Joueur 4",
+  "Joueur 5"
+];
+
+// DATA
+let events = JSON.parse(localStorage.getItem("events")) || [];
+let availability = JSON.parse(localStorage.getItem("availability")) || {};
+
+let calendar;
+let selectedDate = null;
+
+// INIT
+document.addEventListener("DOMContentLoaded", () => {
+
+  calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
+    initialView: "dayGridMonth",
+    dateClick: (info) => openModal(info.dateStr),
+    events: events
+  });
+
+  calendar.render();
+
+  renderStats();
+});
+
+// OPEN MODAL
+function openModal(date) {
+  selectedDate = date;
+
+  const modal = document.getElementById("modal");
+  modal.classList.remove("hidden");
+
+  const container = document.getElementById("players");
+  container.innerHTML = "";
+
+  players.forEach(name => {
+
+    const isChecked = availability[date]?.includes(name);
+
+    const div = document.createElement("div");
+    div.className = "player";
+
+    div.innerHTML = `
+      <span>${name}</span>
+      <input type="checkbox" value="${name}" ${isChecked ? "checked" : ""}>
+    `;
+
+    container.appendChild(div);
+  });
 }
 
-#calendar {
-  max-width: 1000px;
-  margin: auto;
-  background: white;
-  color: black;
-  padding: 10px;
-  border-radius: 10px;
+// CLOSE
+function closeModal() {
+  document.getElementById("modal").classList.add("hidden");
 }
 
-/* modal */
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+// SAVE EVENT
+function saveEvent() {
+
+  const title = document.getElementById("title").value;
+
+  const checkedPlayers = [...document.querySelectorAll("#players input:checked")]
+    .map(el => el.value);
+
+  if (!title || !selectedDate) return;
+
+  // Save availability
+  availability[selectedDate] = checkedPlayers;
+  localStorage.setItem("availability", JSON.stringify(availability));
+
+  // Event auto = nombre de joueurs
+  const event = {
+    title: `${title} (${checkedPlayers.length}/${players.length})`,
+    start: selectedDate,
+    allDay: true,
+    color: getColor(checkedPlayers.length)
+  };
+
+  events.push(event);
+
+  localStorage.setItem("events", JSON.stringify(events));
+
+  calendar.addEvent(event);
+
+  renderStats();
+  closeModal();
 }
 
-.modal-content {
-  background: #1e293b;
-  padding: 20px;
-  border-radius: 10px;
+// COLOR SYSTEM
+function getColor(count) {
+  const ratio = count / players.length;
+
+  if (ratio >= 0.8) return "green";
+  if (ratio >= 0.5) return "orange";
+  return "red";
 }
 
-.hidden {
-  display: none;
+// STATS
+function renderStats() {
+  const statsDiv = document.getElementById("stats");
+  statsDiv.innerHTML = "";
+
+  const totals = {};
+
+  players.forEach(p => totals[p] = 0);
+
+  Object.values(availability).forEach(list => {
+    list.forEach(p => totals[p]++);
+  });
+
+  players.forEach(p => {
+    const div = document.createElement("div");
+    div.innerHTML = `${p} : ${totals[p]} séances`;
+    statsDiv.appendChild(div);
+  });
 }
 
-.player {
-  display: flex;
-  justify-content: space-between;
-  margin: 5px 0;
-}
+// CLOSE MODAL BACKGROUND
+document.getElementById("modal").addEventListener("click", (e) => {
+  if (e.target.id === "modal") closeModal();
+});
