@@ -74,18 +74,18 @@ h1 {
 /* PLAYERS */
 .stats {
   margin-top: 20px;
-  background: #0b1a3a;
-  padding: 15px;
-  border-radius: 10px;
-  width: 500px;
-  display: inline-flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-content: stretch;
-  align-items: center;
-  justify-content: space-evenly;
-  text-align: center;
-  width: 500px;
+    background: #0b1a3a;
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: stretch;
+    align-items: center;
+    justify-content: space-evenly;
+    text-align: center;
+    margin-left: 150px;
+    margin-right: 150px;
 }
 
 .player-card {
