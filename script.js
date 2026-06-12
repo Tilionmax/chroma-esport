@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       openChoiceModal(); // 🔥 MODIF ICI
     },
 
-    eventClick: (info) => openEditModal(info.event)
+    eventClick: (info) => openEventDetail(info.event)
   });
 
   calendar.render();
