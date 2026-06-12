@@ -333,11 +333,12 @@ async function saveEvent() {
   if (!title || !start || !end) return;
 
   await addDoc(collection(db, "events"), {
-    title,
-    date: selectedDate,
-    start,
-    end
-  });
+  title,
+  date: selectedDate,
+  start,
+  end,
+  attendees: {}
+});
 
   closeEventModal();
   refresh();
