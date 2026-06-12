@@ -1,3 +1,4 @@
+import frLocale from "https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales/fr.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getFirestore,
