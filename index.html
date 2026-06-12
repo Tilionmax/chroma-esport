@@ -16,7 +16,7 @@
 
   <h1>CHROMA ESPORT<br>Overwatch Team Schedule</h1>
 
-  <!-- USER DISPLAY -->
+  <!-- USER -->
   <div id="currentPlayerDisplay">
     <button id="changePlayerBtn" class="edit-btn">✏️Edit Username</button>
     <span id="playerText"></span>
@@ -31,6 +31,12 @@
     <div id="weekDays"></div>
   </div>
 
+  <!-- EVENTS -->
+  <div class="stats">
+    <h3>🔥 Events</h3>
+    <div id="eventsList">Clique sur un jour</div>
+  </div>
+
   <!-- PLAYERS -->
   <div class="stats">
     <h3>🟢 Available players</h3>
@@ -39,20 +45,49 @@
 
 </div>
 
-<!-- ===================== -->
+<!-- CHOICE MODAL -->
+<div id="choiceModal" class="modal hidden">
+  <div class="modal-content">
+
+    <h3>Que veux-tu faire ?</h3>
+
+    <button id="choiceAvailBtn">🟢 Disponibilité</button>
+    <button id="choiceEventBtn">🔥 Event</button>
+    <button id="closeChoiceBtn">Close</button>
+
+  </div>
+</div>
+
+<!-- EVENT MODAL -->
+<div id="eventModal" class="modal hidden">
+  <div class="modal-content">
+
+    <h3>Create Event</h3>
+
+    <select id="eventType">
+      <option value="🔥 Scrim">🔥 Scrim</option>
+      <option value="🎯 Training">🎯 Training</option>
+      <option value="🏆 Match">🏆 Match</option>
+    </select>
+
+    <input id="eventTitle" placeholder="Title">
+    <input id="eventStart" placeholder="Start">
+    <input id="eventEnd" placeholder="End">
+
+    <button id="saveEventBtn">Save</button>
+    <button id="closeEventBtn">Close</button>
+
+  </div>
+</div>
+
 <!-- AVAILABILITY MODAL -->
-<!-- ===================== -->
 <div id="availModal" class="modal hidden">
-  <div class="modal-content" onclick="event.stopPropagation()">
+  <div class="modal-content">
 
     <h3>Add availability</h3>
 
-    <p style="color:#020f2a;font-weight:bold;">
-      Connected as: <span id="modalPlayerName"></span>
-    </p>
-
-    <input id="startHour" placeholder="Start e.g. 18h00">
-    <input id="endHour" placeholder="End e.g. 21h30">
+    <input id="startHour" placeholder="Start">
+    <input id="endHour" placeholder="End">
 
     <button id="saveAvailBtn">Save</button>
     <button id="closeAvailBtn">Close</button>
@@ -60,83 +95,15 @@
   </div>
 </div>
 
-<!-- ===================== -->
-<!-- EDIT AVAILABILITY -->
-<!-- ===================== -->
-<div id="editModal" class="modal hidden">
-  <div class="modal-content" onclick="event.stopPropagation()">
-
-    <h3>Manage availability</h3>
-
-    <p id="editInfo"></p>
-
-    <input id="editStart">
-    <input id="editEnd">
-
-    <button id="updateBtn">Edit</button>
-    <button id="deleteBtn">Delete</button>
-    <button id="closeEditBtn">Close</button>
-
-  </div>
-</div>
-
-<!-- ===================== -->
-<!-- USERNAME MODAL -->
-<!-- ===================== -->
+<!-- USERNAME -->
 <div id="usernameModal" class="modal hidden">
-  <div class="modal-content" onclick="event.stopPropagation()">
+  <div class="modal-content">
 
-    <h3>Welcome</h3>
-
-    <input id="usernameInput" placeholder="Enter username">
+    <h3>Username</h3>
+    <input id="usernameInput" placeholder="Discord name">
 
     <button id="saveUsernameBtn">Save</button>
     <button id="closeUsernameBtn">Close</button>
-
-  </div>
-</div>
-
-<!-- ===================== -->
-<!-- EVENT MODAL (🔥 MODIF AJOUT TYPE) -->
-<!-- ===================== -->
-<div id="eventModal" class="modal hidden">
-  <div class="modal-content" onclick="event.stopPropagation()">
-
-    <h3>Create event</h3>
-
-    <input id="eventTitle" placeholder="Event name">
-
-    <select id="eventType">
-      <option value="scrim">Scrim</option>
-      <option value="match">Match</option>
-      <option value="training">Training</option>
-    </select>
-
-    <input id="eventStart" placeholder="Start time">
-    <input id="eventEnd" placeholder="End time">
-
-    <button id="saveEventBtn">Save event</button>
-    <button onclick="closeEventModal()">Close</button>
-
-  </div>
-</div>
-
-<!-- ===================== -->
-<!-- EVENT DETAIL + RSVP -->
-<!-- ===================== -->
-<div id="eventDetailModal" class="modal hidden">
-  <div class="modal-content" onclick="event.stopPropagation()">
-
-    <h3 id="eventDetailTitle"></h3>
-    <p id="eventDetailInfo"></p>
-
-    <button id="btnYes">🟢 I'm available</button>
-    <button id="btnNo">🔴 Not available</button>
-
-    <h4>Players</h4>
-    <div id="attendeesList"></div>
-
-    <button onclick="closeEventDetail()">Close</button>
 
   </div>
 </div>
