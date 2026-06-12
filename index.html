@@ -14,11 +14,11 @@
 
 <div class="container">
 
-  <h1>CHROMA ESPORT<br>Overwatch Team Schedule</h1>
+  <h1>CHROMA ESPORT<br>Planning Equipe EVA</h1>
 
   <!-- USER DISPLAY -->
   <div id="currentPlayerDisplay">
-    <button id="changePlayerBtn" class="edit-btn">✏️Edit Username</button>
+    <button id="changePlayerBtn" class="edit-btn">✏️Modifier Pseudo</button>
     <span id="playerText"></span>
   
   </div>
@@ -34,7 +34,7 @@
 
   <!-- PLAYERS -->
   <div class="stats">
-    <h3>🟢 Available players</h3>
+    <h3>🟢 Joueur Disponible</h3>
     <div id="playersList">Clique sur un jour</div>
   </div>
 
@@ -44,17 +44,17 @@
 <div id="availModal" class="modal hidden" onclick="closeAddBackdrop(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
 
-    <h3>Add availability</h3>
+    <h3>Ajouter une disponibilité</h3>
     
     <p style="color:#020f2a; margin-bottom:10px;font-weight: bold;">
-  Connected as: <span id="modalPlayerName"></span>
+  Connecté en tant que : <span id="modalPlayerName"></span>
     </p>
     
     <input id="startHour" placeholder="Start e.g. 18h00">
     <input id="endHour" placeholder="End e.g. 21h30">
 
-    <button id="saveAvailBtn">Save</button>
-    <button id="closeAvailBtn">Close</button>
+    <button id="saveAvailBtn">Sauvegarder</button>
+    <button id="closeAvailBtn">Fermer</button>
 
   </div>
 </div>
@@ -63,16 +63,16 @@
 <div id="editModal" class="modal hidden" onclick="closeEditBackdrop(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
 
-    <h3>Manage availability</h3>
+    <h3>Gérer la disponibilité</h3>
 
     <p id="editInfo"></p>
 
     <input id="editStart" placeholder="Start e.g. 18h00">
     <input id="editEnd" placeholder="End e.g. 21h30">
 
-    <button id="updateBtn">Edit</button>
-    <button id="deleteBtn">Delete</button>
-    <button id="closeEditBtn">Close</button>
+    <button id="updateBtn">Modifier</button>
+    <button id="deleteBtn">Supprimer</button>
+    <button id="closeEditBtn">Fermer</button>
 
   </div>
 </div>
@@ -81,16 +81,16 @@
 <div id="usernameModal" class="modal hidden" onclick="closeUsernameBackdrop(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
 
-    <h3>Welcome to Chroma Esport</h3>
+    <h3>Bienvenue chez Chroma Esport</h3>
 
 <p style="color:#020f2a;font-weight:bold;">
-Please enter your Discord username before adding availability.
+Veuillez saisir votre nom d'utilisateur Discord avant d'ajouter vos disponibilités.
 </p>
 
     <input id="usernameInput" placeholder="Enter username">
 
-    <button id="saveUsernameBtn">Save</button>
-    <button id="closeUsernameBtn">Close</button>
+    <button id="saveUsernameBtn">Sauvegarder</button>
+    <button id="closeUsernameBtn">Fermer</button>
 
   </div>
 </div>
