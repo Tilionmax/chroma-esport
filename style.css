@@ -85,6 +85,7 @@ h1 {
   align-items: center;
   justify-content: space-evenly;
   text-align: center;
+  width: 500px;
 }
 
 .player-card {
