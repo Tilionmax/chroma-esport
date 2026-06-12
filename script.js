@@ -62,7 +62,18 @@ document.addEventListener("DOMContentLoaded", async () => {
       openChoiceModal();
     },
 
-    eventClick: (info) => openEventDetail(info.event)
+    eventClick: (info) => {
+
+      const type = info.event.extendedProps.type;
+
+      if (type === "event") {
+        openEventDetail(info.event);
+      }
+
+      if (type === "availability") {
+        openEditModal(info.event);
+      }
+    }
   });
 
   calendar.render();
@@ -91,31 +102,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderPlayersForDay();
 });
 
-/* USER */
-function updateUI() {
-  const playerText = document.getElementById("playerText");
-  if (playerText) {
-    playerText.textContent =
-      currentPlayer ? `Connected as: ${currentPlayer}` : "";
-  }
-}
-
-/* USERNAME */
-function openUsernameModal() {
-  document.getElementById("usernameModal").classList.remove("hidden");
-}
-
-function saveUsername() {
-  const name = document.getElementById("usernameInput").value.trim();
-  if (!name) return;
-
-  currentPlayer = name;
-  localStorage.setItem("playerName", name);
-
-  updateUI();
-  closeUsernameModal();
-}
-
 /* LOAD ALL */
 async function loadAll() {
 
@@ -132,7 +118,10 @@ async function loadAll() {
       title: `${d.player} (${d.start}-${d.end})`,
       start: d.date,
       color: "#010c2c",
-      extendedProps: d
+      extendedProps: {
+        ...d,
+        type: "availability"
+      }
     });
   });
 
@@ -144,14 +133,17 @@ async function loadAll() {
       title: `📌 ${d.title} (${d.start}-${d.end})`,
       start: d.date,
       color: "#00d3dd",
-      extendedProps: d
+      extendedProps: {
+        ...d,
+        type: "event"
+      }
     });
   });
 
   return events;
 }
 
-/* AVAILABILITY */
+/* SAVE AVAILABILITY */
 async function saveAvailability() {
 
   const start = document.getElementById("startHour").value;
@@ -170,7 +162,7 @@ async function saveAvailability() {
   refresh();
 }
 
-/* EVENT */
+/* SAVE EVENT */
 async function saveEvent() {
 
   const title = document.getElementById("eventTitle").value;
@@ -251,12 +243,7 @@ async function refresh() {
   calendar.removeAllEvents();
   const data = await loadAll();
   data.forEach(e => calendar.addEvent(e));
-  renderPlayersForDay();
 }
-
-/* WEEK + PLAYERS (inchangé simplifié) */
-function renderWeek() {}
-async function renderPlayersForDay() {}
 
 /* MODALS */
 function openChoiceModal() {
