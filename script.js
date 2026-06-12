@@ -98,7 +98,7 @@ function updateUI() {
 
   if (playerText) {
     playerText.textContent =
-      currentPlayer ? `Connected as: ${currentPlayer}` : "";
+      currentPlayer ? `Connecté en tant que : ${currentPlayer}` : "";
   }
 
 }
