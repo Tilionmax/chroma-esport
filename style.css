@@ -169,7 +169,7 @@ button:hover {
   margin-bottom: 10px;
   font-size: 22px;
   background: #3c9195;
-  color: #010c2c;
+  color: #ffffff;
   padding: 6px;
   border-radius: 8px;
   font-weight: bold;
@@ -183,7 +183,7 @@ button:hover {
  .fc .fc-button{
     background-color: #3c9195 !important;
     border-color: #3c9195 !important;
-    color: #000000 !important;
+    color: #ffffff !important;
     font-weight: bold !important;
 }
 
@@ -220,7 +220,7 @@ button:hover {
     background: #010c2c !important;
     border: none !important;
     cursor: pointer !important;
-    color: #3c9195 !important;
+    color: #ffffff !important;
     font-weight: bold !important;
     font-size: 16px !important;
 }
