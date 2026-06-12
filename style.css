@@ -159,11 +159,11 @@ button {
  {
     box-shadow: rgb(76 91 106 / 0%) 0px 0px 0px 0.2rem !important;
  }
-
+/* Couleur case jour passé */
 :root {   
-   --fc-neutral-bg-color: #000000;
+   --fc-neutral-bg-color: #585858f0;
 }
-   
+/* Bouton edit username */
 .edit-btn
  {
     background: #010c2c !important;
