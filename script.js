@@ -45,16 +45,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     },
 
     dateClick: (info) => {
-      const today = new Date().toISOString().split("T")[0];
-      if (info.dateStr < today) return;
 
-      selectedDate = info.dateStr;
-      selectedDay = info.dateStr;
+  if (!currentPlayer) {
+    openUsernameModal();
+    return;
+  }
 
-      renderWeek();
-      renderPlayersForDay();
-      openAvailModal();
-    },
+  const today = new Date().toISOString().split("T")[0];
+  if (info.dateStr < today) return;
+
+  selectedDate = info.dateStr;
+  selectedDay = info.dateStr;
+
+  renderWeek();
+  renderPlayersForDay();
+  openAvailModal();
+},
 
     eventClick: (info) => openEditModal(info.event)
   });
@@ -73,8 +79,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("closeUsernameBtn").addEventListener("click", closeUsernameModal);
 
   updateUI();
-  renderWeek();
-  renderPlayersForDay();
+renderWeek();
+renderPlayersForDay();
+
+/* PREMIERE VISITE */
+if (!currentPlayer) {
+  openUsernameModal();
+
+  // cache le bouton fermer
+  document.getElementById("closeUsernameBtn").style.display = "none";
+}
 });
 
 /* USER */
@@ -100,13 +114,22 @@ function closeUsernameModal() {
 }
 
 function saveUsername() {
+
   const name = document.getElementById("usernameInput").value.trim();
-  if (!name) return;
+
+  if (!name) {
+    alert("Please enter your Discord username");
+    return;
+  }
 
   currentPlayer = name;
   localStorage.setItem("playerName", name);
 
   updateUI();
+
+  // réaffiche le bouton fermer
+  document.getElementById("closeUsernameBtn").style.display = "inline-block";
+
   closeUsernameModal();
 }
 
