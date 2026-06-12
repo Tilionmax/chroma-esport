@@ -77,20 +77,23 @@ h1 {
   background: #0b1a3a;
   padding: 15px;
   border-radius: 10px;
+  width: 320px;
 }
 
 .player-card {
-  background: #020f2a;
+  background: #3c9195;
   padding: 10px;
   margin: 5px 0;
   border-radius: 8px;
   display: flex;
   justify-content: space-between;
+  
 }
 
 .player-name {
   color: #3c9195;
   font-weight: bold;
+  font-size: 16px
 }
 
 /* MODAL */
