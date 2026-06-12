@@ -36,8 +36,9 @@ h1 {
 #weekRange {
   text-align: center;
   font-weight: bold;
-  color: #00e5ff;
+  color: #00d3dd;
   margin-bottom: 10px;
+  font-size: 18px;
 }
 
 #weekDays {
