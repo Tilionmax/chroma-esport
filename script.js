@@ -5,11 +5,9 @@ import {
   addDoc,
   getDocs,
   deleteDoc,
-  doc,
-  updateDoc
+  doc
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-/* FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyBJX1M5RBfbQuylsLKNsaKflTD0l19l6lI",
   authDomain: "chroma-esport-eva.firebaseapp.com",
@@ -22,46 +20,35 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-/* STATE */
 let calendar;
 let selectedDate = null;
-let selectedEvent = null;
-let selectedEventDoc = null;
-
 let currentPlayer = localStorage.getItem("playerName") || "";
+let selectedEvent = null;
 
 /* INIT */
 document.addEventListener("DOMContentLoaded", async () => {
 
   const calendarEl = document.getElementById("calendar");
-
   const events = await loadAll();
 
   calendar = new FullCalendar.Calendar(calendarEl, {
+
     initialView: "dayGridMonth",
     events,
 
     dateClick: (info) => {
 
-      if (!currentPlayer) {
-        openUsernameModal();
-        return;
-      }
+      if (!currentPlayer) return openUsernameModal();
 
       selectedDate = info.dateStr;
-      openAvailModal();
+      openChoiceModal();
     },
 
     eventClick: (info) => {
 
-      const type = info.event.extendedProps.type;
-
-      if (type === "event") {
-        selectedEventDoc = info.event;
+      if (info.event.extendedProps.type === "event") {
         openEventDetail(info.event);
-      }
-
-      if (type === "availability") {
+      } else {
         openEditModal(info.event);
       }
     }
@@ -69,20 +56,39 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   calendar.render();
 
-  document.getElementById("saveEventBtn").addEventListener("click", saveEvent);
-  document.getElementById("btnYes").addEventListener("click", () => updateAttendance(true));
-  document.getElementById("btnNo").addEventListener("click", () => updateAttendance(false));
+  document.getElementById("choiceAvailBtn").onclick = () => {
+    closeChoiceModal();
+    openAvailModal();
+  };
 
-  document.getElementById("saveAvailBtn").addEventListener("click", saveAvailability);
+  document.getElementById("choiceEventBtn").onclick = () => {
+    closeChoiceModal();
+    openEventModal();
+  };
+
+  document.getElementById("closeChoiceBtn").onclick = closeChoiceModal;
+
+  document.getElementById("saveEventBtn").onclick = saveEvent;
+  document.getElementById("closeEventBtn").onclick = closeEventModal;
+
+  document.getElementById("saveAvailBtn").onclick = saveAvailability;
+  document.getElementById("closeAvailBtn").onclick = closeAvailModal;
+
+  document.getElementById("saveUsernameBtn").onclick = saveUsername;
+  document.getElementById("closeUsernameBtn").onclick = closeUsernameModal;
+
+  updateUI();
+  renderWeek();
+  renderPlayersForDay();
 });
 
 /* LOAD */
 async function loadAll() {
 
+  const events = [];
+
   const availSnap = await getDocs(collection(db, "availabilities"));
   const eventSnap = await getDocs(collection(db, "events"));
-
-  let events = [];
 
   availSnap.forEach(d => {
     const x = d.data();
@@ -96,18 +102,11 @@ async function loadAll() {
 
   eventSnap.forEach(d => {
     const x = d.data();
-
-    const colors = {
-      scrim: "#ffb703",
-      match: "#fb5607",
-      training: "#00d3dd"
-    };
-
     events.push({
       id: d.id,
-      title: `[${x.type}] ${x.title}`,
+      title: `${x.type} ${x.title}`,
       start: x.date,
-      color: colors[x.type] || "#00d3dd",
+      color: "#ff7b00",
       extendedProps: { ...x, type: "event" }
     });
   });
@@ -115,71 +114,102 @@ async function loadAll() {
   return events;
 }
 
-/* SAVE EVENT */
-async function saveEvent() {
-
-  await addDoc(collection(db, "events"), {
-    title: document.getElementById("eventTitle").value,
-    type: document.getElementById("eventType").value,
-    date: selectedDate,
-    start: document.getElementById("eventStart").value,
-    end: document.getElementById("eventEnd").value,
-    attendees: {}
-  });
-
-  refresh();
-}
-
-/* RSVP */
-async function updateAttendance(status) {
-
-  const id = selectedEventDoc.id;
-
-  await updateDoc(doc(db, "events", id), {
-    [`attendees.${currentPlayer}`]: status
-  });
-
-  refresh();
-}
-
-/* SAVE AVAILABILITY (inchangé logique) */
+/* SAVE AVAILABILITY */
 async function saveAvailability() {
 
   await addDoc(collection(db, "availabilities"), {
     player: currentPlayer,
     date: selectedDate,
-    start: document.getElementById("startHour").value,
-    end: document.getElementById("endHour").value
+    start: startHour.value,
+    end: endHour.value
   });
+
+  refresh();
+  closeAvailModal();
+}
+
+/* SAVE EVENT */
+async function saveEvent() {
+
+  await addDoc(collection(db, "events"), {
+    type: eventType.value,
+    title: eventTitle.value,
+    date: selectedDate,
+    start: eventStart.value,
+    end: eventEnd.value,
+    attendees: {}
+  });
+
+  refresh();
+  closeEventModal();
+}
+
+/* RSVP */
+async function toggleRSVP(status) {
+
+  const event = selectedEvent;
+
+  const data = event.extendedProps;
+  data.attendees[currentPlayer] = status;
+
+  await deleteDoc(doc(db, "events", event.id));
+  await addDoc(collection(db, "events"), data);
 
   refresh();
 }
 
-/* REFRESH */
-async function refresh() {
-  calendar.removeAllEvents();
-  const data = await loadAll();
-  data.forEach(e => calendar.addEvent(e));
-}
-
-/* MODALS (minimal safe) */
-function openAvailModal() {
-  document.getElementById("availModal").classList.remove("hidden");
-}
-
+/* EVENTS CLICK */
 function openEventDetail(event) {
-  document.getElementById("eventDetailModal").classList.remove("hidden");
-  document.getElementById("eventDetailTitle").textContent = event.title;
-
-  const a = event.extendedProps.attendees || {};
-  document.getElementById("attendeesList").innerHTML =
-    Object.entries(a).map(([k,v]) => `<div>${k}: ${v ? "🟢" : "🔴"}</div>`).join("");
+  selectedEvent = event;
+  alert(`${event.title}`);
 }
 
-function openEditModal(event) {
-  document.getElementById("editModal").classList.remove("hidden");
+/* UI */
+function openChoiceModal() {
+  choiceModal.classList.remove("hidden");
+}
+
+function closeChoiceModal() {
+  choiceModal.classList.add("hidden");
+}
+
+function openEventModal() {
+  eventModal.classList.remove("hidden");
+}
+
+function closeEventModal() {
+  eventModal.classList.add("hidden");
+}
+
+function openAvailModal() {
+  availModal.classList.remove("hidden");
+}
+
+function closeAvailModal() {
+  availModal.classList.add("hidden");
 }
 
 function openUsernameModal() {
-  document.getElementById("usernameModal").classList.remove("hidden");
+  usernameModal.classList.remove("hidden");
+}
+
+function closeUsernameModal() {
+  usernameModal.classList.add("hidden");
+}
+
+function saveUsername() {
+  currentPlayer = usernameInput.value;
+  localStorage.setItem("playerName", currentPlayer);
+  updateUI();
+}
+
+function updateUI() {
+  playerText.textContent = currentPlayer ? `Connected as: ${currentPlayer}` : "";
+}
+
+/* PLACEHOLDER */
+function renderWeek() {}
+function renderPlayersForDay() {}
+function refresh() {
+  location.reload();
 }
