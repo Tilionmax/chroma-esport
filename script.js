@@ -33,7 +33,6 @@ let currentPlayer = localStorage.getItem("playerName") || "";
 document.addEventListener("DOMContentLoaded", async () => {
 
   const calendarEl = document.getElementById("calendar");
-
   const events = await loadAll();
 
   calendar = new FullCalendar.Calendar(calendarEl, {
@@ -46,28 +45,28 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     dateClick: (info) => {
 
-  if (!currentPlayer) {
-    openUsernameModal();
-    return;
-  }
+      const today = new Date().toISOString().split("T")[0];
+      if (info.dateStr < today) return;
 
-  const today = new Date().toISOString().split("T")[0];
-  if (info.dateStr < today) return;
+      if (!currentPlayer) {
+        openUsernameModal();
+        return;
+      }
 
-  selectedDate = info.dateStr;
-  selectedDay = info.dateStr;
+      selectedDate = info.dateStr;
+      selectedDay = info.dateStr;
 
-  renderWeek();
-  renderPlayersForDay();
-  openAvailModal();
-},
+      renderWeek();
+      renderPlayersForDay();
+
+      openChoiceModal(); // 🔥 MODIF ICI
+    },
 
     eventClick: (info) => openEditModal(info.event)
   });
 
   calendar.render();
 
-  /* BUTTONS */
   document.getElementById("saveAvailBtn").addEventListener("click", saveAvailability);
   document.getElementById("closeAvailBtn").addEventListener("click", closeAvailModal);
   document.getElementById("updateBtn").addEventListener("click", updateEvent);
@@ -78,32 +77,35 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("saveUsernameBtn").addEventListener("click", saveUsername);
   document.getElementById("closeUsernameBtn").addEventListener("click", closeUsernameModal);
 
+  /* NEW */
+  document.getElementById("choiceAvailBtn").addEventListener("click", () => {
+    closeChoiceModal();
+    openAvailModal();
+  });
+
+  document.getElementById("choiceEventBtn").addEventListener("click", () => {
+    closeChoiceModal();
+    openEventModal();
+  });
+
+  document.getElementById("saveEventBtn").addEventListener("click", saveEvent);
+
   updateUI();
-renderWeek();
-renderPlayersForDay();
-
-/* PREMIERE VISITE */
-if (!currentPlayer) {
-  openUsernameModal();
-
-  // cache le bouton fermer
-  document.getElementById("closeUsernameBtn").style.display = "none";
-}
+  renderWeek();
+  renderPlayersForDay();
 });
 
 /* USER */
 function updateUI() {
-
   const playerText = document.getElementById("playerText");
 
   if (playerText) {
     playerText.textContent =
       currentPlayer ? `Connected as: ${currentPlayer}` : "";
   }
-
 }
 
-/* USERNAME MODAL */
+/* USERNAME */
 function openUsernameModal() {
   document.getElementById("usernameModal").classList.remove("hidden");
   document.getElementById("usernameInput").value = currentPlayer;
@@ -116,20 +118,12 @@ function closeUsernameModal() {
 function saveUsername() {
 
   const name = document.getElementById("usernameInput").value.trim();
-
-  if (!name) {
-    alert("Please enter your Discord username");
-    return;
-  }
+  if (!name) return;
 
   currentPlayer = name;
   localStorage.setItem("playerName", name);
 
   updateUI();
-
-  // réaffiche le bouton fermer
-  document.getElementById("closeUsernameBtn").style.display = "inline-block";
-
   closeUsernameModal();
 }
 
@@ -153,7 +147,7 @@ async function loadAll() {
   return events;
 }
 
-/* SAVE */
+/* SAVE AVAILABILITY */
 async function saveAvailability() {
 
   const player = currentPlayer;
@@ -161,7 +155,6 @@ async function saveAvailability() {
   const end = document.getElementById("endHour").value;
 
   if (!player || !start || !end) return;
-
 
   await addDoc(collection(db, "availabilities"), {
     player,
@@ -172,22 +165,6 @@ async function saveAvailability() {
 
   refresh();
   closeAvailModal();
-}
-
-/* EDIT */
-function openEditModal(event) {
-
-  if (event.extendedProps.player !== currentPlayer) return;
-
-  selectedEvent = event;
-
-  document.getElementById("editInfo").textContent =
-    `${event.extendedProps.player} ${event.extendedProps.start}-${event.extendedProps.end}`;
-
-  document.getElementById("editStart").value = event.extendedProps.start;
-  document.getElementById("editEnd").value = event.extendedProps.end;
-
-  document.getElementById("editModal").classList.remove("hidden");
 }
 
 /* UPDATE */
@@ -232,14 +209,6 @@ function renderWeek() {
 
   container.innerHTML = "";
 
-  const start = new Date(today);
-  const end = new Date(today);
-
-  end.setDate(end.getDate() + 6);
-
-  document.getElementById("weekRange").textContent =
-    `📅 Week of ${start.toLocaleDateString("fr-FR")} → ${end.toLocaleDateString("fr-FR")}`;
-
   for (let i = 0; i < 7; i++) {
 
     const d = new Date(today);
@@ -250,18 +219,16 @@ function renderWeek() {
     const div = document.createElement("div");
     div.className = "week-day";
 
-    if (iso === selectedDay) {
-      div.classList.add("active");
-    }
+    if (iso === selectedDay) div.classList.add("active");
 
     div.textContent = d.toLocaleDateString("en-GB", {
-      weekday: "long",
+      weekday: "short",
       day: "2-digit"
     });
 
     div.onclick = () => {
       selectedDay = iso;
-      renderWeek(); // met à jour le surlignage
+      renderWeek();
       renderPlayersForDay();
     };
 
@@ -297,8 +264,6 @@ async function renderPlayersForDay() {
 /* MODALS */
 function openAvailModal() {
   document.getElementById("availModal").classList.remove("hidden");
-
-  // affiche le pseudo dans la popup
   document.getElementById("modalPlayerName").textContent =
     currentPlayer || "No username";
 }
@@ -307,7 +272,56 @@ function closeAvailModal() {
   document.getElementById("availModal").classList.add("hidden");
 }
 
+function openEditModal(event) {
+
+  if (event.extendedProps.player !== currentPlayer) return;
+
+  selectedEvent = event;
+
+  document.getElementById("editInfo").textContent =
+    `${event.extendedProps.player} ${event.extendedProps.start}-${event.extendedProps.end}`;
+
+  document.getElementById("editModal").classList.remove("hidden");
+}
+
 function closeEditModal() {
   document.getElementById("editModal").classList.add("hidden");
   selectedEvent = null;
+}
+
+/* 🔥 NEW MODALS */
+function openChoiceModal() {
+  document.getElementById("choiceModal").classList.remove("hidden");
+}
+
+function closeChoiceModal() {
+  document.getElementById("choiceModal").classList.add("hidden");
+}
+
+function openEventModal() {
+  document.getElementById("eventModal").classList.remove("hidden");
+}
+
+function closeEventModal() {
+  document.getElementById("eventModal").classList.add("hidden");
+}
+
+/* SAVE EVENT */
+async function saveEvent() {
+
+  const title = document.getElementById("eventTitle").value;
+  const start = document.getElementById("eventStart").value;
+  const end = document.getElementById("eventEnd").value;
+
+  if (!title || !start || !end) return;
+
+  await addDoc(collection(db, "events"), {
+    title,
+    date: selectedDate,
+    start,
+    end
+  });
+
+  closeEventModal();
+  refresh();
 }
