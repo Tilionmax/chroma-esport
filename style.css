@@ -84,6 +84,7 @@ h1 {
   align-content: stretch;
   align-items: center;
   justify-content: space-evenly;
+  text-align: center;
 }
 
 .player-card {
