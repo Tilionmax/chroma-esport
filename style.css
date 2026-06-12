@@ -41,9 +41,6 @@ h1 {
 }
 
 #weekDays {
-  
-  
-
   display: flex;
   justify-content: center;
   gap: 8px;
@@ -96,12 +93,15 @@ h1 {
 }
 
 .modal-content {
-  background: #010c2c;
+  background: #3c9195;
   padding: 20px;
   border-radius: 10px;
   width: 320px;
+  color: #020f2a;
 }
-
+#editinfo{
+  font-weight: bold;
+}
 .hidden {
   display: none;
 }
