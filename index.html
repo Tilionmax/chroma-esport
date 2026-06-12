@@ -16,18 +16,22 @@
 
   <h1>CHROMA ESPORT<br>Overwatch Team Schedule</h1>
 
+  <!-- USER DISPLAY -->
   <div id="currentPlayerDisplay">
     <button id="changePlayerBtn" class="edit-btn">✏️Edit Username</button>
     <span id="playerText"></span>
   </div>
 
+  <!-- CALENDAR -->
   <div id="calendar"></div>
 
+  <!-- WEEK -->
   <div class="week-bar">
     <div id="weekRange"></div>
     <div id="weekDays"></div>
   </div>
 
+  <!-- PLAYERS -->
   <div class="stats">
     <h3>🟢 Available players</h3>
     <div id="playersList">Clique sur un jour</div>
@@ -35,22 +39,30 @@
 
 </div>
 
-<!-- AVAILABILITY -->
+<!-- ===================== -->
+<!-- AVAILABILITY MODAL -->
+<!-- ===================== -->
 <div id="availModal" class="modal hidden">
   <div class="modal-content" onclick="event.stopPropagation()">
+
     <h3>Add availability</h3>
 
-    <p>Connected as: <span id="modalPlayerName"></span></p>
+    <p style="color:#020f2a;font-weight:bold;">
+      Connected as: <span id="modalPlayerName"></span>
+    </p>
 
-    <input id="startHour" placeholder="Start">
-    <input id="endHour" placeholder="End">
+    <input id="startHour" placeholder="Start e.g. 18h00">
+    <input id="endHour" placeholder="End e.g. 21h30">
 
     <button id="saveAvailBtn">Save</button>
     <button id="closeAvailBtn">Close</button>
+
   </div>
 </div>
 
-<!-- EDIT -->
+<!-- ===================== -->
+<!-- EDIT AVAILABILITY -->
+<!-- ===================== -->
 <div id="editModal" class="modal hidden">
   <div class="modal-content" onclick="event.stopPropagation()">
 
@@ -68,14 +80,15 @@
   </div>
 </div>
 
-<!-- USERNAME -->
+<!-- ===================== -->
+<!-- USERNAME MODAL -->
+<!-- ===================== -->
 <div id="usernameModal" class="modal hidden">
   <div class="modal-content" onclick="event.stopPropagation()">
 
     <h3>Welcome</h3>
-    <p>Enter Discord username</p>
 
-    <input id="usernameInput">
+    <input id="usernameInput" placeholder="Enter username">
 
     <button id="saveUsernameBtn">Save</button>
     <button id="closeUsernameBtn">Close</button>
@@ -83,7 +96,51 @@
   </div>
 </div>
 
-<!-- SCRIPT -->
+<!-- ===================== -->
+<!-- EVENT MODAL (🔥 MODIF AJOUT TYPE) -->
+<!-- ===================== -->
+<div id="eventModal" class="modal hidden">
+  <div class="modal-content" onclick="event.stopPropagation()">
+
+    <h3>Create event</h3>
+
+    <input id="eventTitle" placeholder="Event name">
+
+    <select id="eventType">
+      <option value="scrim">Scrim</option>
+      <option value="match">Match</option>
+      <option value="training">Training</option>
+    </select>
+
+    <input id="eventStart" placeholder="Start time">
+    <input id="eventEnd" placeholder="End time">
+
+    <button id="saveEventBtn">Save event</button>
+    <button onclick="closeEventModal()">Close</button>
+
+  </div>
+</div>
+
+<!-- ===================== -->
+<!-- EVENT DETAIL + RSVP -->
+<!-- ===================== -->
+<div id="eventDetailModal" class="modal hidden">
+  <div class="modal-content" onclick="event.stopPropagation()">
+
+    <h3 id="eventDetailTitle"></h3>
+    <p id="eventDetailInfo"></p>
+
+    <button id="btnYes">🟢 I'm available</button>
+    <button id="btnNo">🔴 Not available</button>
+
+    <h4>Players</h4>
+    <div id="attendeesList"></div>
+
+    <button onclick="closeEventDetail()">Close</button>
+
+  </div>
+</div>
+
 <script type="module" src="script.js"></script>
 
 </body>
