@@ -238,7 +238,7 @@ function renderWeek() {
   end.setDate(end.getDate() + 6);
 
   document.getElementById("weekRange").textContent =
-    `📅 Week of ${start.toLocaleDateString("fr-FR")} → ${end.toLocaleDateString("fr-FR")}`;
+    `📅 Semaine du ${start.toLocaleDateString("fr-FR")} → ${end.toLocaleDateString("fr-FR")}`;
 
   for (let i = 0; i < 7; i++) {
 
@@ -254,7 +254,7 @@ function renderWeek() {
       div.classList.add("active");
     }
 
-    div.textContent = d.toLocaleDateString("en-GB", {
+    div.textContent = d.toLocaleDateString("fr-FR", {
       weekday: "long",
       day: "2-digit"
     });
