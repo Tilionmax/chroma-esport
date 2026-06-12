@@ -101,7 +101,12 @@ h1 {
 .player-name {
   color: #010c2c;
   font-weight: bold;
-  font-size: 16px
+  font-size: 16px;
+  text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
+}
+
+#playerslist {
+  width: 250px;
 }
 
 /* MODAL */
