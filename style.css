@@ -77,7 +77,13 @@ h1 {
   background: #0b1a3a;
   padding: 15px;
   border-radius: 10px;
-  width: 320px;
+  width: 500px;
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: stretch;
+  align-items: center;
+  justify-content: space-evenly;
 }
 
 .player-card {
@@ -87,7 +93,7 @@ h1 {
   border-radius: 8px;
   display: flex;
   justify-content: space-between;
-  
+  color: #000000;
 }
 
 .player-name {
