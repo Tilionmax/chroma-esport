@@ -161,7 +161,7 @@ button {
  }
 
 :root {   
-   --fc-neutral-bg-color: hsl(0deg 0% 0% / 51%);
+   --fc-neutral-bg-color: #000000;
 }
    
 .edit-btn
