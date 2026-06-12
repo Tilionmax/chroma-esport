@@ -233,14 +233,3 @@ button:hover {
     font-weight: bold !important;
     font-size: 16px !important;
 }
-.fc .fc-daygrid-event {
-  white-space: normal !important;
-  overflow: hidden;
-  display: block;
-}
-
-.fc .fc-event-title {
-  white-space: normal !important;
-  overflow: hidden;
-  display: block;
-}
