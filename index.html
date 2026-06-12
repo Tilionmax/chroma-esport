@@ -38,7 +38,6 @@
 <!-- AVAILABILITY -->
 <div id="availModal" class="modal hidden">
   <div class="modal-content" onclick="event.stopPropagation()">
-
     <h3>Add availability</h3>
 
     <p>Connected as: <span id="modalPlayerName"></span></p>
@@ -48,11 +47,10 @@
 
     <button id="saveAvailBtn">Save</button>
     <button id="closeAvailBtn">Close</button>
-
   </div>
 </div>
 
-<!-- EDIT AVAILABILITY -->
+<!-- EDIT -->
 <div id="editModal" class="modal hidden">
   <div class="modal-content" onclick="event.stopPropagation()">
 
@@ -75,8 +73,7 @@
   <div class="modal-content" onclick="event.stopPropagation()">
 
     <h3>Welcome</h3>
-
-    <p>Please enter your Discord username</p>
+    <p>Enter Discord username</p>
 
     <input id="usernameInput">
 
@@ -86,46 +83,7 @@
   </div>
 </div>
 
-<!-- EVENT MODAL -->
-<div id="eventModal" class="modal hidden">
-  <div class="modal-content" onclick="event.stopPropagation()">
-
-    <h3>Create event</h3>
-
-    <input id="eventTitle" placeholder="Event name">
-
-    <select id="eventType">
-      <option value="scrim">Scrim</option>
-      <option value="match">Match</option>
-      <option value="training">Training</option>
-    </select>
-
-    <input id="eventStart" placeholder="Start">
-    <input id="eventEnd" placeholder="End">
-
-    <button id="saveEventBtn">Save event</button>
-    <button onclick="closeEventModal()">Close</button>
-
-  </div>
-</div>
-
-<!-- EVENT DETAIL -->
-<div id="eventDetailModal" class="modal hidden">
-  <div class="modal-content" onclick="event.stopPropagation()">
-
-    <h3 id="eventDetailTitle"></h3>
-
-    <button id="btnYes">🟢 Available</button>
-    <button id="btnNo">🔴 Not available</button>
-
-    <h4>Players</h4>
-    <div id="attendeesList"></div>
-
-    <button onclick="closeEventDetail()">Close</button>
-
-  </div>
-</div>
-
+<!-- SCRIPT -->
 <script type="module" src="script.js"></script>
 
 </body>
