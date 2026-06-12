@@ -215,7 +215,7 @@ function renderWeek() {
   end.setDate(end.getDate() + 6);
 
   document.getElementById("weekRange").textContent =
-    `📅 Semaine du ${start.toLocaleDateString("fr-FR")} → ${end.toLocaleDateString("fr-FR")}`;
+    `📅 Week of ${start.toLocaleDateString("fr-FR")} → ${end.toLocaleDateString("fr-FR")}`;
 
   for (let i = 0; i < 7; i++) {
 
