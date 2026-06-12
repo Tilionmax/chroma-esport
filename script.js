@@ -342,3 +342,7 @@ async function saveEvent() {
   closeEventModal();
   refresh();
 }
+window.closeChoiceModal = closeChoiceModal;
+window.openChoiceModal = openChoiceModal;
+window.openEventModal = openEventModal;
+window.closeEventModal = closeEventModal;
