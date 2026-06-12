@@ -162,6 +162,8 @@ button {
 /* Couleur case jour passé */
 :root {   
    --fc-neutral-bg-color: #585858f0;
+   --fc-today-bg-color: #3c9195ba;
+
 }
 /* Bouton edit username */
 .edit-btn
