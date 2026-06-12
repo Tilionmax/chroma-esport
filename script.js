@@ -1,4 +1,3 @@
-import frLocale from "https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.15/locales/fr.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getFirestore,
@@ -34,12 +33,24 @@ let currentPlayer = localStorage.getItem("playerName") || "";
 document.addEventListener("DOMContentLoaded", async () => {
 
   const calendarEl = document.getElementById("calendar");
-
   const events = await loadAll();
 
   calendar = new FullCalendar.Calendar(calendarEl, {
+
     initialView: "dayGridMonth",
     events,
+
+    /* 🇫🇷 CALENDRIER EN FRANÇAIS */
+    locale: "fr",
+    firstDay: 1,
+
+    buttonText: {
+      today: "Aujourd’hui",
+      month: "Mois",
+      week: "Semaine",
+      day: "Jour",
+      list: "Liste"
+    },
 
     validRange: {
       start: new Date().toISOString().split("T")[0]
@@ -47,21 +58,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     dateClick: (info) => {
 
-  if (!currentPlayer) {
-    openUsernameModal();
-    return;
-  }
+      if (!currentPlayer) {
+        openUsernameModal();
+        return;
+      }
 
-  const today = new Date().toISOString().split("T")[0];
-  if (info.dateStr < today) return;
+      const today = new Date().toISOString().split("T")[0];
+      if (info.dateStr < today) return;
 
-  selectedDate = info.dateStr;
-  selectedDay = info.dateStr;
+      selectedDate = info.dateStr;
+      selectedDay = info.dateStr;
 
-  renderWeek();
-  renderPlayersForDay();
-  openAvailModal();
-},
+      renderWeek();
+      renderPlayersForDay();
+      openAvailModal();
+    },
 
     eventClick: (info) => openEditModal(info.event)
   });
@@ -80,31 +91,25 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("closeUsernameBtn").addEventListener("click", closeUsernameModal);
 
   updateUI();
-renderWeek();
-renderPlayersForDay();
+  renderWeek();
+  renderPlayersForDay();
 
-/* PREMIERE VISITE */
-if (!currentPlayer) {
-  openUsernameModal();
-
-  // cache le bouton fermer
-  document.getElementById("closeUsernameBtn").style.display = "none";
-}
+  if (!currentPlayer) {
+    openUsernameModal();
+    document.getElementById("closeUsernameBtn").style.display = "none";
+  }
 });
 
 /* USER */
 function updateUI() {
-
   const playerText = document.getElementById("playerText");
-
   if (playerText) {
     playerText.textContent =
       currentPlayer ? `Connecté en tant que : ${currentPlayer}` : "";
   }
-
 }
 
-/* USERNAME MODAL */
+/* USERNAME */
 function openUsernameModal() {
   document.getElementById("usernameModal").classList.remove("hidden");
   document.getElementById("usernameInput").value = currentPlayer;
@@ -115,7 +120,6 @@ function closeUsernameModal() {
 }
 
 function saveUsername() {
-
   const name = document.getElementById("usernameInput").value.trim();
 
   if (!name) {
@@ -127,10 +131,7 @@ function saveUsername() {
   localStorage.setItem("playerName", name);
 
   updateUI();
-
-  // réaffiche le bouton fermer
   document.getElementById("closeUsernameBtn").style.display = "inline-block";
-
   closeUsernameModal();
 }
 
@@ -162,7 +163,6 @@ async function saveAvailability() {
   const end = document.getElementById("endHour").value;
 
   if (!player || !start || !end) return;
-
 
   await addDoc(collection(db, "availabilities"), {
     player,
@@ -262,7 +262,7 @@ function renderWeek() {
 
     div.onclick = () => {
       selectedDay = iso;
-      renderWeek(); // met à jour le surlignage
+      renderWeek();
       renderPlayersForDay();
     };
 
@@ -299,7 +299,6 @@ async function renderPlayersForDay() {
 function openAvailModal() {
   document.getElementById("availModal").classList.remove("hidden");
 
-  // affiche le pseudo dans la popup
   document.getElementById("modalPlayerName").textContent =
     currentPlayer || "No username";
 }
