@@ -129,17 +129,34 @@ function saveUsername() {
 
 /* LOAD */
 async function loadAll() {
-  const snapshot = await getDocs(collection(db, "availabilities"));
+
+  const availSnap = await getDocs(collection(db, "availabilities"));
+  const eventSnap = await getDocs(collection(db, "events"));
 
   let events = [];
 
-  snapshot.forEach(docSnap => {
+  /* AVAILABILITIES */
+  availSnap.forEach(docSnap => {
     const d = docSnap.data();
 
     events.push({
       id: docSnap.id,
       title: `${d.player} (${d.start}-${d.end})`,
       start: d.date,
+      color: "#010c2c", // option visuelle
+      extendedProps: d
+    });
+  });
+
+  /* EVENTS */
+  eventSnap.forEach(docSnap => {
+    const d = docSnap.data();
+
+    events.push({
+      id: docSnap.id,
+      title: `📌 ${d.title} (${d.start}-${d.end})`,
+      start: d.date,
+      color: "#00d3dd", // couleur event
       extendedProps: d
     });
   });
