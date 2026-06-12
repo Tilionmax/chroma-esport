@@ -52,11 +52,13 @@ h1 {
   padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
+  font-weight: bold;
 }
 
 .week-day.active {
-  background: #3c9195;
+  background: #00d3dd;
   color: black;
+  font-weight: bold;
 }
 
 /* PLAYERS */
