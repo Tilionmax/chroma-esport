@@ -32,12 +32,17 @@ let currentPlayer = localStorage.getItem("playerName") || "";
 document.addEventListener("DOMContentLoaded", async () => {
 
   const calendarEl = document.getElementById("calendar");
+
   const events = await loadAll();
 
   calendar = new FullCalendar.Calendar(calendarEl, {
 
     initialView: "dayGridMonth",
     events,
+
+    validRange: {
+      start: new Date().toISOString().split("T")[0]
+    },
 
     dateClick: (info) => {
 
@@ -47,74 +52,47 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       selectedDate = info.dateStr;
-      openChoiceModal();
+      openAvailModal();
     },
 
     eventClick: (info) => {
-
-      const type = info.event.extendedProps.type;
-
-      if (type === "event") {
-        openEventDetail(info.event);
-      } else {
-        openEditModal(info.event);
-      }
+      openEditModal(info.event);
     }
   });
 
   calendar.render();
 
   /* BUTTONS */
-  document.getElementById("saveAvailBtn").onclick = saveAvailability;
-  document.getElementById("closeAvailBtn").onclick = closeAvailModal;
+  document.getElementById("saveAvailBtn").addEventListener("click", saveAvailability);
+  document.getElementById("closeAvailBtn").addEventListener("click", closeAvailModal);
 
-  document.getElementById("updateBtn").onclick = updateEvent;
-  document.getElementById("deleteBtn").onclick = deleteEvent;
-  document.getElementById("closeEditBtn").onclick = closeEditModal;
+  document.getElementById("updateBtn").addEventListener("click", updateEvent);
+  document.getElementById("deleteBtn").addEventListener("click", deleteEvent);
+  document.getElementById("closeEditBtn").addEventListener("click", closeEditModal);
 
-  document.getElementById("saveEventBtn").onclick = saveEvent;
-
-  document.getElementById("btnYes").onclick = () => updateAttendance(true);
-  document.getElementById("btnNo").onclick = () => updateAttendance(false);
-
-  document.getElementById("saveUsernameBtn").onclick = saveUsername;
-  document.getElementById("closeUsernameBtn").onclick = closeUsernameModal;
+  document.getElementById("changePlayerBtn").addEventListener("click", openUsernameModal);
+  document.getElementById("saveUsernameBtn").addEventListener("click", saveUsername);
+  document.getElementById("closeUsernameBtn").addEventListener("click", closeUsernameModal);
 
   updateUI();
 });
 
 /* LOAD */
 async function loadAll() {
-
-  const availSnap = await getDocs(collection(db, "availabilities"));
-  const eventSnap = await getDocs(collection(db, "events"));
+  const snap = await getDocs(collection(db, "availabilities"));
 
   let events = [];
 
-  availSnap.forEach(d => {
-    const x = d.data();
+  snap.forEach(docSnap => {
+    const d = docSnap.data();
 
     events.push({
-      id: d.id,
-      title: `${x.player} (${x.start}-${x.end})`,
-      start: x.date,
-      extendedProps: { ...x, type: "availability" }
-    });
-  });
-
-  eventSnap.forEach(d => {
-    const x = d.data();
-
-    let icon = "📌";
-    if (x.type === "scrim") icon = "🔥";
-    if (x.type === "match") icon = "🏆";
-    if (x.type === "training") icon = "🎯";
-
-    events.push({
-      id: d.id,
-      title: `${icon} ${x.title} (${x.start}-${x.end})`,
-      start: x.date,
-      extendedProps: { ...x, type: "event", ...x }
+      id: docSnap.id,
+      title: `${d.player} (${d.start}-${d.end})`,
+      start: d.date,
+      extendedProps: {
+        player: d.player
+      }
     });
   });
 
@@ -140,85 +118,7 @@ async function saveAvailability() {
   refresh();
 }
 
-/* SAVE EVENT */
-async function saveEvent() {
-
-  const title = document.getElementById("eventTitle").value;
-  const type = document.getElementById("eventType").value;
-  const start = document.getElementById("eventStart").value;
-  const end = document.getElementById("eventEnd").value;
-
-  if (!title || !start || !end) return;
-
-  await addDoc(collection(db, "events"), {
-    title,
-    type,
-    date: selectedDate,
-    start,
-    end,
-    attendees: {}
-  });
-
-  closeEventModal();
-  refresh();
-}
-
-/* EVENT DETAIL */
-function openEventDetail(event) {
-
-  selectedEvent = event;
-
-  document.getElementById("eventDetailTitle").textContent = event.title;
-
-  const attendees = event.extendedProps.attendees || {};
-
-  document.getElementById("attendeesList").innerHTML =
-    Object.entries(attendees).map(([name, val]) =>
-      `<div>${name} : ${val ? "🟢" : "🔴"}</div>`
-    ).join("") || "No responses";
-
-  document.getElementById("eventDetailModal").classList.remove("hidden");
-}
-
-/* RSVP */
-async function updateAttendance(status) {
-
-  const id = selectedEvent.id;
-
-  const snap = await getDocs(collection(db, "events"));
-
-  let data;
-
-  snap.forEach(d => {
-    if (d.id === id) data = d.data();
-  });
-
-  const attendees = data.attendees || {};
-  attendees[currentPlayer] = status;
-
-  await deleteDoc(doc(db, "events", id));
-
-  await addDoc(collection(db, "events"), {
-    ...data,
-    attendees
-  });
-
-  closeEventDetail();
-  refresh();
-}
-
-/* EDIT AVAILABILITY */
-function openEditModal(event) {
-
-  selectedEvent = event;
-
-  document.getElementById("editInfo").textContent =
-    `${event.extendedProps.player} ${event.extendedProps.start}-${event.extendedProps.end}`;
-
-  document.getElementById("editModal").classList.remove("hidden");
-}
-
-/* UPDATE / DELETE */
+/* UPDATE */
 async function updateEvent() {
 
   await deleteDoc(doc(db, "availabilities", selectedEvent.id));
@@ -230,16 +130,15 @@ async function updateEvent() {
     end: document.getElementById("editEnd").value
   });
 
-  refresh();
   closeEditModal();
+  refresh();
 }
 
+/* DELETE */
 async function deleteEvent() {
-
   await deleteDoc(doc(db, "availabilities", selectedEvent.id));
-
-  refresh();
   closeEditModal();
+  refresh();
 }
 
 /* REFRESH */
@@ -249,37 +148,52 @@ async function refresh() {
   data.forEach(e => calendar.addEvent(e));
 }
 
-/* UI */
+/* USER */
 function updateUI() {
   document.getElementById("playerText").textContent =
     currentPlayer ? `Connected as: ${currentPlayer}` : "";
 }
 
-/* MODALS */
-function openChoiceModal() {
-  document.getElementById("choiceModal").classList.remove("hidden");
-}
-
+/* USERNAME */
 function openUsernameModal() {
   document.getElementById("usernameModal").classList.remove("hidden");
+}
+
+function closeUsernameModal() {
+  document.getElementById("usernameModal").classList.add("hidden");
+}
+
+function saveUsername() {
+  const name = document.getElementById("usernameInput").value.trim();
+  if (!name) return;
+
+  currentPlayer = name;
+  localStorage.setItem("playerName", name);
+
+  updateUI();
+  closeUsernameModal();
+}
+
+/* AVAILABILITY MODAL */
+function openAvailModal() {
+  document.getElementById("availModal").classList.remove("hidden");
+  document.getElementById("modalPlayerName").textContent = currentPlayer;
 }
 
 function closeAvailModal() {
   document.getElementById("availModal").classList.add("hidden");
 }
 
+/* EDIT MODAL */
+function openEditModal(event) {
+
+  selectedEvent = event;
+
+  document.getElementById("editInfo").textContent = event.title;
+
+  document.getElementById("editModal").classList.remove("hidden");
+}
+
 function closeEditModal() {
   document.getElementById("editModal").classList.add("hidden");
-}
-
-function closeEventModal() {
-  document.getElementById("eventModal").classList.add("hidden");
-}
-
-function closeEventDetail() {
-  document.getElementById("eventDetailModal").classList.add("hidden");
-}
-
-function closeUsernameModal() {
-  document.getElementById("usernameModal").classList.add("hidden");
 }
