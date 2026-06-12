@@ -16,24 +16,23 @@
 
   <h1>CHROMA ESPORT<br>Overwatch Team Schedule</h1>
 
+  <!-- USER DISPLAY -->
   <div id="currentPlayerDisplay">
     <button id="changePlayerBtn" class="edit-btn">✏️Edit Username</button>
     <span id="playerText"></span>
+  
   </div>
 
+  <!-- CALENDAR -->
   <div id="calendar"></div>
 
+  <!-- WEEK -->
   <div class="week-bar">
     <div id="weekRange"></div>
     <div id="weekDays"></div>
   </div>
 
-  <!-- 🔥 EVENT INFO + RSVP (AJOUT) -->
-  <div class="stats">
-    <h3>📌 Event / Training / Scrim</h3>
-    <div id="eventInfoBox">Clique sur un event</div>
-  </div>
-
+  <!-- PLAYERS -->
   <div class="stats">
     <h3>🟢 Available players</h3>
     <div id="playersList">Clique sur un jour</div>
@@ -41,29 +40,35 @@
 
 </div>
 
-<!-- AVAILABILITY -->
-<div id="availModal" class="modal hidden">
+<!-- ADD MODAL -->
+<div id="availModal" class="modal hidden" onclick="closeAddBackdrop(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
+
     <h3>Add availability</h3>
-
-    <p>Connected as: <span id="modalPlayerName"></span></p>
-
-    <input id="startHour" placeholder="Start">
-    <input id="endHour" placeholder="End">
+    
+    <p style="color:#020f2a; margin-bottom:10px;font-weight: bold;">
+  Connected as: <span id="modalPlayerName"></span>
+    </p>
+    
+    <input id="startHour" placeholder="Start e.g. 18h00">
+    <input id="endHour" placeholder="End e.g. 21h30">
 
     <button id="saveAvailBtn">Save</button>
     <button id="closeAvailBtn">Close</button>
+
   </div>
 </div>
 
-<!-- EDIT -->
-<div id="editModal" class="modal hidden">
+<!-- EDIT MODAL -->
+<div id="editModal" class="modal hidden" onclick="closeEditBackdrop(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
 
-    <h3>Edit availability</h3>
+    <h3>Manage availability</h3>
 
-    <input id="editStart">
-    <input id="editEnd">
+    <p id="editInfo"></p>
+
+    <input id="editStart" placeholder="Start e.g. 18h00">
+    <input id="editEnd" placeholder="End e.g. 21h30">
 
     <button id="updateBtn">Edit</button>
     <button id="deleteBtn">Delete</button>
@@ -72,44 +77,20 @@
   </div>
 </div>
 
-<!-- USERNAME -->
-<div id="usernameModal" class="modal hidden">
+<!-- USERNAME MODAL -->
+<div id="usernameModal" class="modal hidden" onclick="closeUsernameBackdrop(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
 
-    <h3>Username</h3>
-    <input id="usernameInput">
+    <h3>Welcome to Chroma Esport</h3>
+
+<p style="color:#020f2a;font-weight:bold;">
+Please enter your Discord username before adding availability.
+</p>
+
+    <input id="usernameInput" placeholder="Enter username">
 
     <button id="saveUsernameBtn">Save</button>
     <button id="closeUsernameBtn">Close</button>
-
-  </div>
-</div>
-
-<!-- 🔥 CHOICE MODAL (AJOUT IMPORTANT) -->
-<div id="choiceModal" class="modal hidden">
-  <div class="modal-content" onclick="event.stopPropagation()">
-
-    <h3>What do you want ?</h3>
-
-    <button id="choiceAvailBtn">Add availability</button>
-    <button id="choiceEventBtn">Create event</button>
-
-    <button onclick="closeChoiceModal()">Close</button>
-  </div>
-</div>
-
-<!-- 🔥 EVENT MODAL -->
-<div id="eventModal" class="modal hidden">
-  <div class="modal-content" onclick="event.stopPropagation()">
-
-    <h3>Create event</h3>
-
-    <input id="eventTitle" placeholder="scrim / match / training">
-    <input id="eventStart" placeholder="Start">
-    <input id="eventEnd" placeholder="End">
-
-    <button id="saveEventBtn">Save event</button>
-    <button onclick="closeEventModal()">Close</button>
 
   </div>
 </div>
