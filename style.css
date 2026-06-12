@@ -153,6 +153,16 @@ button {
   cursor: pointer;
 }
 
+button:hover {
+  padding: 10px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #010c2c;
+  color: ffffff;
+}
+
 /* USER */
 #currentPlayerDisplay {
   text-align: center;
