@@ -3,9 +3,10 @@ import {
   getFirestore,
   collection,
   addDoc,
-  getDocs,
   deleteDoc,
-  doc
+  doc,
+  onSnapshot,
+  getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 /* FIREBASE */
@@ -25,7 +26,6 @@ const db = getFirestore(app);
 let calendar;
 let selectedDate = null;
 let selectedDay = new Date().toISOString().split("T")[0];
-let selectedEvent = null;
 
 let currentPlayer = localStorage.getItem("playerName") || "";
 
@@ -33,94 +33,58 @@ let currentPlayer = localStorage.getItem("playerName") || "";
 document.addEventListener("DOMContentLoaded", async () => {
 
   const calendarEl = document.getElementById("calendar");
+
   const events = await loadAll();
 
   calendar = new FullCalendar.Calendar(calendarEl, {
-
     initialView: "dayGridMonth",
     events,
     locale: "fr",
     firstDay: 1,
 
-    buttonText: {
-      today: "Aujourd’hui",
-      month: "Mois",
-      week: "Semaine",
-      day: "Jour",
-      list: "Liste"
-    },
-
-    validRange: {
-      start: new Date().toISOString().split("T")[0]
-    },
-
     dateClick: (info) => {
-
-      if (!currentPlayer) {
-        openUsernameModal();
-        return;
-      }
-
-      const today = new Date().toISOString().split("T")[0];
-      if (info.dateStr < today) return;
+      if (!currentPlayer) return openUsernameModal();
 
       selectedDate = info.dateStr;
       selectedDay = info.dateStr;
 
-      renderWeek();
-      renderPlayersForDay();
       openAvailModal();
-    },
-
-    eventClick: (info) => {
-
-      if (info.event.extendedProps.type === "event") {
-        openEventModal(info.event);
-      } else {
-        openEditModal(info.event);
-      }
+      renderPlayersForDay();
     }
   });
 
   calendar.render();
 
   /* BUTTONS */
-  document.getElementById("saveAvailBtn").addEventListener("click", saveAvailability);
-  document.getElementById("closeAvailBtn").addEventListener("click", closeAvailModal);
+  document.getElementById("createEventBtn").onclick = () => {
+    if (currentPlayer !== "Tikafx") return alert("Admin uniquement");
+    document.getElementById("eventModal").classList.remove("hidden");
+  };
 
-  document.getElementById("updateBtn").addEventListener("click", updateEvent);
-  document.getElementById("deleteBtn").addEventListener("click", deleteEvent);
-  document.getElementById("closeEditBtn").addEventListener("click", closeEditModal);
+  document.getElementById("saveEventBtn").onclick = saveEvent;
+  document.getElementById("closeEventBtn").onclick = closeEventModal;
 
-  document.getElementById("changePlayerBtn").addEventListener("click", openUsernameModal);
-  document.getElementById("saveUsernameBtn").addEventListener("click", saveUsername);
-  document.getElementById("closeUsernameBtn").addEventListener("click", closeUsernameModal);
+  document.getElementById("saveAvailBtn").onclick = saveAvailability;
+  document.getElementById("closeAvailBtn").onclick = closeAvailModal;
 
-  /* NEW EVENT BUTTONS */
-  document.getElementById("createEventBtn").addEventListener("click", openEventModal);
-  document.getElementById("saveEventBtn").addEventListener("click", saveEvent);
-  document.getElementById("closeEventBtn").addEventListener("click", closeEventModal);
-
-  document.getElementById("attendBtn").addEventListener("click", () => setAttendance(true));
-  document.getElementById("absentBtn").addEventListener("click", () => setAttendance(false));
+  document.getElementById("saveUsernameBtn").onclick = saveUsername;
+  document.getElementById("closeUsernameBtn").onclick = closeUsernameModal;
 
   updateUI();
   renderWeek();
   renderPlayersForDay();
-
-  if (!currentPlayer) openUsernameModal();
+  listenEvents(); // 🔥 REAL TIME
 });
 
 /* USER */
 function updateUI() {
   document.getElementById("playerText").textContent =
-    currentPlayer ? `Connecté en tant que : ${currentPlayer}` : "";
+    currentPlayer ? `Connecté : ${currentPlayer}` : "";
 }
 
 /* USERNAME */
 function openUsernameModal() {
   document.getElementById("usernameModal").classList.remove("hidden");
-  document.getElementById("usernameInput").value = currentPlayer;
 }
 
 function closeUsernameModal() {
@@ -128,64 +92,72 @@ function closeUsernameModal() {
 }
 
 function saveUsername() {
-  const name = document.getElementById("usernameInput").value.trim();
-  if (!name) return;
-
-  currentPlayer = name;
-  localStorage.setItem("playerName", name);
-
+  currentPlayer = document.getElementById("usernameInput").value;
+  localStorage.setItem("playerName", currentPlayer);
   updateUI();
   closeUsernameModal();
 }
 
-/* LOAD */
-async function loadAll() {
+/* EVENTS REALTIME */
+function listenEvents() {
 
-  const snapA = await getDocs(collection(db, "availabilities"));
-  const snapE = await getDocs(collection(db, "events"));
+  onSnapshot(collection(db, "events"), (snap) => {
 
-  let events = [];
+    let html = "";
 
-  snapA.forEach(d => {
-    const data = d.data();
+    snap.forEach(docSnap => {
 
-    events.push({
-      id: d.id,
-      title: `${data.player} (${data.start}-${data.end})`,
-      start: data.date,
-      extendedProps: { ...data, type: "avail" }
+      const e = docSnap.data();
+
+      const participants = e.participants || {};
+      const yes = [];
+      const no = [];
+
+      Object.entries(participants).forEach(([p, v]) => {
+        if (v) yes.push(p);
+        else no.push(p);
+      });
+
+      html += `
+        <div class="event-card">
+
+          <b>${e.title}</b><br>
+          📅 ${e.date}<br>
+          🕒 ${e.start} - ${e.end}
+
+          <button onclick="setAttendance('${docSnap.id}', true)">✔️ Je participe</button>
+          <button onclick="setAttendance('${docSnap.id}', false)">❌ Absent</button>
+
+          <div class="yes">✔️ ${yes.join(", ") || "-"}</div>
+          <div class="no">❌ ${no.join(", ") || "-"}</div>
+
+        </div>
+      `;
     });
+
+    document.getElementById("eventsList").innerHTML =
+      html || "Aucun event";
   });
-
-  snapE.forEach(d => {
-    const data = d.data();
-
-    events.push({
-      id: d.id,
-      title: `🎮 ${data.title} (${data.start}-${data.end})`,
-      start: data.date,
-      extendedProps: { ...data, type: "event", participants: data.participants || {} }
-    });
-  });
-
-  return events;
 }
 
-/* SAVE AVAIL */
-async function saveAvailability() {
+/* RSVP */
+window.setAttendance = async (id, status) => {
 
-  await addDoc(collection(db, "availabilities"), {
-    player: currentPlayer,
-    date: selectedDate,
-    start: document.getElementById("startHour").value,
-    end: document.getElementById("endHour").value
+  const snap = await getDocs(collection(db, "events"));
+
+  let data;
+
+  snap.forEach(d => {
+    if (d.id === id) data = d.data();
   });
 
-  refresh();
-  closeAvailModal();
-}
+  data.participants[currentPlayer] = status;
 
-/* EVENT */
+  await deleteDoc(doc(db, "events", id));
+  await addDoc(collection(db, "events"), data);
+};
+
+/* CREATE EVENT */
 async function saveEvent() {
 
   await addDoc(collection(db, "events"), {
@@ -196,121 +168,50 @@ async function saveEvent() {
     participants: {}
   });
 
-  refresh();
   closeEventModal();
 }
 
-/* RSVP */
-async function setAttendance(status) {
-
-  const snap = await getDocs(collection(db, "events"));
-
-  let eventData;
-  let id;
-
-  snap.forEach(d => {
-    if (d.data().title === selectedEvent.title) {
-      eventData = d.data();
-      id = d.id;
-    }
-  });
-
-  eventData.participants[currentPlayer] = status;
-
-  await deleteDoc(doc(db, "events", id));
-  await addDoc(collection(db, "events"), eventData);
-
-  refresh();
-}
-
-/* EDIT AVAIL */
-function openEditModal(event) {
-
-  selectedEvent = event;
-
-  document.getElementById("editModal").classList.remove("hidden");
-  document.getElementById("editInfo").textContent = event.title;
-
-  document.getElementById("editStart").value = event.extendedProps.start;
-  document.getElementById("editEnd").value = event.extendedProps.end;
-}
-
-async function updateEvent() {
-
-  await deleteDoc(doc(db, "availabilities", selectedEvent.id));
+/* AVAIL */
+async function saveAvailability() {
 
   await addDoc(collection(db, "availabilities"), {
     player: currentPlayer,
-    date: selectedEvent.startStr,
-    start: document.getElementById("editStart").value,
-    end: document.getElementById("editEnd").value
+    date: selectedDate,
+    start: document.getElementById("startHour").value,
+    end: document.getElementById("endHour").value
   });
 
-  refresh();
-  closeEditModal();
+  closeAvailModal();
 }
 
-async function deleteEvent() {
-  await deleteDoc(doc(db, "availabilities", selectedEvent.id));
-  refresh();
-}
+/* LOAD CALENDAR */
+async function loadAll() {
 
-/* REFRESH */
-async function refresh() {
-  calendar.removeAllEvents();
-  const data = await loadAll();
-  data.forEach(e => calendar.addEvent(e));
+  const snap = await getDocs(collection(db, "availabilities"));
 
-  renderPlayersForDay();
+  let events = [];
+
+  snap.forEach(d => {
+    const e = d.data();
+
+    events.push({
+      title: `${e.player} (${e.start}-${e.end})`,
+      start: e.date
+    });
+  });
+
+  return events;
 }
 
 /* WEEK */
 function renderWeek() {
-
-  const today = new Date();
-  const container = document.getElementById("weekDays");
-
-  container.innerHTML = "";
-
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-
-    const iso = d.toISOString().split("T")[0];
-
-    const div = document.createElement("div");
-    div.className = "week-day";
-
-    div.textContent = d.toLocaleDateString("fr-FR", { weekday: "long", day: "2-digit" });
-
-    div.onclick = () => {
-      selectedDay = iso;
-      renderPlayersForDay();
-    };
-
-    container.appendChild(div);
-  }
+  const c = document.getElementById("weekDays");
+  c.innerHTML = "";
 }
 
 /* PLAYERS */
-async function renderPlayersForDay() {
-
-  const list = document.getElementById("playersList");
-  const snap = await getDocs(collection(db, "availabilities"));
-
-  let arr = [];
-
-  snap.forEach(d => {
-    const data = d.data();
-    if (data.date === selectedDay) arr.push(data);
-  });
-
-  list.innerHTML = arr.map(p =>
-    `<div class="player-card">
-      <span>${p.player}</span>
-      <span>${p.start} - ${p.end}</span>
-    </div>`
-  ).join("");
+function renderPlayersForDay() {
+  document.getElementById("playersList").innerHTML = "";
 }
 
 /* MODALS */
@@ -322,14 +223,6 @@ function closeAvailModal() {
   document.getElementById("availModal").classList.add("hidden");
 }
 
-function openEventModal() {
-  document.getElementById("eventModal").classList.remove("hidden");
-}
-
 function closeEventModal() {
   document.getElementById("eventModal").classList.add("hidden");
-}
-
-function closeEditModal() {
-  document.getElementById("editModal").classList.add("hidden");
 }
