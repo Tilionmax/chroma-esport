@@ -237,3 +237,6 @@ button:hover {
   background: #010c2c;
   color: white;
 }
+#createEventBtn {
+  background : red;
+}
