@@ -67,3 +67,28 @@ body {
 #currenteventDisplay button {
   background: #0b1a3a;
 }
+.layout {
+  display: flex;
+  gap: 20px;
+}
+
+/* LEFT PANEL */
+.event-panel {
+  width: 250px;
+  background: #0b1a3a;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+/* RIGHT PANEL */
+.calendar-panel {
+  flex: 1;
+}
+
+/* participants */
+#participantsList {
+  margin-top: 10px;
+  background: #020f2a;
+  padding: 10px;
+  border-radius: 8px;
+}
