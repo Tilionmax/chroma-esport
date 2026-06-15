@@ -6,37 +6,14 @@ body {
 }
 
 .container {
+  max-width: 1200px;
+  margin: auto;
   padding: 20px;
 }
 
-.layout {
-  display: flex;
-  gap: 15px;
-}
-
-/* EVENTS LEFT */
-#eventsPanel {
-  width: 250px;
-  background: #0b1a3a;
-  padding: 10px;
-  border-radius: 10px;
-}
-
-.event-card {
-  background: #3c9195;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 8px;
-}
-
-.event-card button {
-  width: 100%;
-  margin-top: 5px;
-}
-
-/* CENTER */
-.center {
-  flex: 1;
+h1 {
+  text-align: center;
+  color: #00d3dd;
 }
 
 /* CALENDAR */
@@ -45,9 +22,97 @@ body {
   color: black;
   padding: 10px;
   border-radius: 10px;
+  min-height: 800px;
 }
 
-/* MODALS */
+/* WEEK */
+.week-bar {
+  margin-top: 15px;
+  background: #0b1a3a;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+#weekRange {
+  text-align: center;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+#weekDays {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.week-day {
+  background: #020f2a;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.week-day.active {
+  background: #00d3dd;
+  color: black;
+  font-weight: bold !important;
+  font-size: 18px;
+}
+
+.week-day:hover {
+  background: #00d3dd;
+  color: black;
+  font-weight: bold !important;
+  font-size: 18px;
+}
+
+/* PLAYERS */
+.stats {
+  margin-top: 20px;
+  background: #0b1a3a;
+  padding: 15px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: stretch;
+  align-items: center;
+  justify-content: space-evenly;
+  text-align: center;
+  margin-left: 275px;
+  margin-right: 275px;
+}
+
+.player-card {
+  background: #3c9195;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 18px;
+  text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
+}
+
+.player-name {
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 18px;
+  text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
+}
+
+#playersList {
+  width: 250px !important;
+}
+
+/* MODAL */
 .modal {
   position: fixed;
   inset: 0;
@@ -55,40 +120,134 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 9999;
 }
 
 .modal-content {
   background: #3c9195;
   padding: 20px;
   border-radius: 10px;
+  width: 320px;
+  color: #020f2a;
+  font-weight: bold;
 }
 
-/* BUTTON ADMIN */
-#currenteventDisplay button {
-  background: #0b1a3a;
-}
-.layout {
-  display: flex;
-  gap: 20px;
+#editinfo{
+  font-weight: bold;
 }
 
-/* LEFT PANEL */
-.event-panel {
-  width: 250px;
-  background: #0b1a3a;
+.hidden {
+  display: none;
+}
+
+input {
+  width: 100%;
+  box-sizing: border-box;
   padding: 10px;
-  border-radius: 10px;
+  margin: 10px 0;
 }
 
-/* RIGHT PANEL */
-.calendar-panel {
-  flex: 1;
-}
-
-/* participants */
-#participantsList {
-  margin-top: 10px;
-  background: #020f2a;
+button {
   padding: 10px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  padding: 10px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #010c2c;
+  color: #ffffff;
+}
+
+/* USER */
+#currentPlayerDisplay {
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 22px;
+  background: #3c9195;
+  color: #ffffff;
+  padding: 6px;
   border-radius: 8px;
+  font-weight: bold;
+}
+
+#modalPlayerName {
+  font-weight: bold;
+  color: #020f2a;
+}
+
+.fc .fc-button{
+  background-color: #3c9195 !important;
+  border-color: #3c9195 !important;
+  color: #ffffff !important;
+  font-weight: bold !important;
+}
+
+.fc .fc-button:hover {
+  background-color: #00d3dd !important;
+  border-color: #00d3dd !important;
+}
+
+.fc .fc-button:disabled{
+  opacity: 1 !important;
+}
+
+.fc .fc-button-primary:focus {
+  box-shadow: rgb(76 91 106 / 0%) 0px 0px 0px 0.2rem !important;
+}
+
+/* Couleur case jour passé */
+:root {   
+  --fc-neutral-bg-color: #585858f0;
+  --fc-today-bg-color: #3c9195ba;
+}
+
+.fc-h-event {
+  background-color: #010c2c;
+  border: 1px solid #010c2c;
+  display: block;
+}
+
+/* Bouton edit username */
+.edit-btn {
+  background: #010c2c !important;
+  border: none !important;
+  cursor: pointer !important;
+  color: #ffffff !important;
+  font-weight: bold !important;
+  font-size: 16px !important;
+}
+
+.edit-btn:hover {
+  background: #ffffff !important;
+  border: none !important;
+  cursor: pointer !important;
+  color: #000000 !important;
+  font-weight: bold !important;
+  font-size: 16px !important;
+}
+
+#eventModal .modal-content button {
+  background: #010c2c;
+  color: white;
+}
+
+#createEventBtn {
+  background: #0b1a3a !important;
+  width: 199.4px;
+}
+
+#createEventBtn:hover {
+  background: #ffffff !important;
+  border: none !important;
+  cursor: pointer !important;
+  color: #000000 !important;
+  font-weight: bold !important;
+  font-size: 16px !important;
 }
