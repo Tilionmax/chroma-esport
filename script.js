@@ -43,6 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     dateClick: (info) => {
       if (!currentPlayer) return openUsernameModal();
+
       selectedDate = info.dateStr;
       openAvailModal();
     },
@@ -58,6 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   /* BUTTONS */
   document.getElementById("saveAvailBtn").onclick = saveAvailability;
   document.getElementById("saveEventBtn").onclick = saveEvent;
+
   document.getElementById("createEventBtn").onclick = openEventModal;
 
   document.getElementById("attendBtn").onclick = () => setAttendance(true);
@@ -88,7 +90,7 @@ async function loadAll() {
   return arr;
 }
 
-/* SAVE EVENT (ONLY Tikafx) */
+/* CREATE EVENT (ONLY Tikafx) */
 async function saveEvent() {
 
   if (currentPlayer !== "Tikafx") {
@@ -108,7 +110,7 @@ async function saveEvent() {
   closeEventModal();
 }
 
-/* RSVP */
+/* RSVP FIX */
 async function setAttendance(status) {
 
   const snap = await getDocs(collection(db, "events"));
@@ -132,20 +134,16 @@ async function setAttendance(status) {
   renderParticipants(selectedEvent);
 }
 
-/* DISPLAY PARTICIPANTS */
+/* PARTICIPANTS UI */
 function renderParticipants(event) {
 
   const box = document.getElementById("participantsList");
 
   const p = event.extendedProps.participants || {};
 
-  let html = "";
-
-  Object.keys(p).forEach(name => {
-    html += `<div>${name} : ${p[name] ? "Présent" : "Absent"}</div>`;
-  });
-
-  box.innerHTML = html;
+  box.innerHTML = Object.keys(p).map(name =>
+    `<div>${name} : ${p[name] ? "Présent" : "Absent"}</div>`
+  ).join("");
 }
 
 /* AVAIL */
@@ -171,6 +169,7 @@ function updateUI() {
 /* REFRESH */
 async function refresh() {
   const events = await loadAll();
+
   calendar.removeAllEvents();
   events.forEach(e => calendar.addEvent(e));
 
@@ -182,14 +181,8 @@ async function refreshSidebar() {
 
   const snap = await getDocs(collection(db, "events"));
 
-  let html = "";
-
-  snap.forEach(d => {
-    const e = d.data();
-    html += `<div><b>${e.title}</b></div>`;
-  });
-
-  document.getElementById("eventList").innerHTML = html;
+  document.getElementById("eventList").innerHTML =
+    snap.docs.map(d => `<div>${d.data().title}</div>`).join("");
 }
 
 /* MODALS */
