@@ -16,24 +16,30 @@
 
   <h1>CHROMA ESPORT<br>Planning Equipe EVA</h1>
 
+  <!-- LAYOUT AJOUTÉ -->
   <div class="layout">
 
-    <!-- LEFT COLUMN EVENTS -->
-    <div class="event-panel">
-      <button id="createEventBtn" class="edit-btn">➕ Créer event</button>
+    <!-- LEFT COLUMN -->
+    <div class="left-panel">
+
+      <div id="currenteventDisplay">
+        <button id="createEventBtn" class="edit-btn">➕ Créer event</button>
+      </div>
 
       <h3>📌 Events</h3>
       <div id="eventList"></div>
 
-      <h3>🟢 Participants</h3>
+      <h3>👥 Participants</h3>
+
       <button id="attendBtn">Je participe</button>
       <button id="absentBtn">Je suis absent</button>
 
       <div id="participantsList"></div>
+
     </div>
 
-    <!-- RIGHT CALENDAR -->
-    <div class="calendar-panel">
+    <!-- RIGHT -->
+    <div class="right-panel">
 
       <div id="currentPlayerDisplay">
         <button id="changePlayerBtn" class="edit-btn">✏️Modifier Pseudo</button>
@@ -53,10 +59,11 @@
       </div>
 
     </div>
+
   </div>
 </div>
 
-<!-- AVAIL MODAL -->
+<!-- MODALS (INCHANGÉS) -->
 <div id="availModal" class="modal hidden">
   <div class="modal-content">
 
@@ -71,12 +78,28 @@
   </div>
 </div>
 
-<!-- USER MODAL -->
+<div id="editModal" class="modal hidden">
+  <div class="modal-content">
+
+    <h3>Gérer la disponibilité</h3>
+
+    <p id="editInfo"></p>
+
+    <input id="editStart">
+    <input id="editEnd">
+
+    <button id="updateBtn">Modifier</button>
+    <button id="deleteBtn">Supprimer</button>
+    <button id="closeEditBtn">Fermer</button>
+
+  </div>
+</div>
+
 <div id="usernameModal" class="modal hidden">
   <div class="modal-content">
 
-    <h3>Pseudo Discord</h3>
-    <input id="usernameInput" placeholder="Pseudo">
+    <h3>Pseudo</h3>
+    <input id="usernameInput">
 
     <button id="saveUsernameBtn">Sauvegarder</button>
     <button id="closeUsernameBtn">Fermer</button>
@@ -84,16 +107,15 @@
   </div>
 </div>
 
-<!-- EVENT MODAL -->
 <div id="eventModal" class="modal hidden">
   <div class="modal-content">
 
-    <h3>Créer un event</h3>
+    <h3>Créer event</h3>
 
-    <input id="eventTitle" placeholder="Nom event">
+    <input id="eventTitle">
     <input id="eventDate" type="date">
-    <input id="eventStart" placeholder="Début">
-    <input id="eventEnd" placeholder="Fin">
+    <input id="eventStart">
+    <input id="eventEnd">
 
     <button id="saveEventBtn">Créer</button>
     <button id="closeEventBtn">Fermer</button>
