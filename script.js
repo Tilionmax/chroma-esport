@@ -3,10 +3,10 @@ import {
   getFirestore,
   collection,
   addDoc,
+  getDocs,
   deleteDoc,
   doc,
-  onSnapshot,
-  getDocs
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 /* FIREBASE */
@@ -25,8 +25,7 @@ const db = getFirestore(app);
 /* STATE */
 let calendar;
 let selectedDate = null;
-let selectedDay = new Date().toISOString().split("T")[0];
-
+let selectedEvent = null;
 let currentPlayer = localStorage.getItem("playerName") || "";
 
 /* INIT */
@@ -37,128 +36,65 @@ document.addEventListener("DOMContentLoaded", async () => {
   const events = await loadAll();
 
   calendar = new FullCalendar.Calendar(calendarEl, {
+
     initialView: "dayGridMonth",
     events,
     locale: "fr",
-    firstDay: 1,
 
     dateClick: (info) => {
       if (!currentPlayer) return openUsernameModal();
-
       selectedDate = info.dateStr;
-      selectedDay = info.dateStr;
-
       openAvailModal();
-      renderPlayersForDay();
+    },
+
+    eventClick: (info) => {
+      selectedEvent = info.event;
+      renderParticipants(info.event);
     }
   });
 
   calendar.render();
 
   /* BUTTONS */
-  document.getElementById("createEventBtn").onclick = () => {
-    if (currentPlayer !== "Tikafx") return alert("Admin uniquement");
-    document.getElementById("eventModal").classList.remove("hidden");
-  };
-
-  document.getElementById("saveEventBtn").onclick = saveEvent;
-  document.getElementById("closeEventBtn").onclick = closeEventModal;
-
   document.getElementById("saveAvailBtn").onclick = saveAvailability;
-  document.getElementById("closeAvailBtn").onclick = closeAvailModal;
+  document.getElementById("saveEventBtn").onclick = saveEvent;
+  document.getElementById("createEventBtn").onclick = openEventModal;
 
-  document.getElementById("saveUsernameBtn").onclick = saveUsername;
-  document.getElementById("closeUsernameBtn").onclick = closeUsernameModal;
+  document.getElementById("attendBtn").onclick = () => setAttendance(true);
+  document.getElementById("absentBtn").onclick = () => setAttendance(false);
 
   updateUI();
-  renderWeek();
-  renderPlayersForDay();
-  listenEvents(); // 🔥 REAL TIME
+  refreshSidebar();
 });
 
-/* USER */
-function updateUI() {
-  document.getElementById("playerText").textContent =
-    currentPlayer ? `Connecté : ${currentPlayer}` : "";
-}
-
-/* USERNAME */
-function openUsernameModal() {
-  document.getElementById("usernameModal").classList.remove("hidden");
-}
-
-function closeUsernameModal() {
-  document.getElementById("usernameModal").classList.add("hidden");
-}
-
-function saveUsername() {
-  currentPlayer = document.getElementById("usernameInput").value;
-  localStorage.setItem("playerName", currentPlayer);
-  updateUI();
-  closeUsernameModal();
-}
-
-/* EVENTS REALTIME */
-function listenEvents() {
-
-  onSnapshot(collection(db, "events"), (snap) => {
-
-    let html = "";
-
-    snap.forEach(docSnap => {
-
-      const e = docSnap.data();
-
-      const participants = e.participants || {};
-      const yes = [];
-      const no = [];
-
-      Object.entries(participants).forEach(([p, v]) => {
-        if (v) yes.push(p);
-        else no.push(p);
-      });
-
-      html += `
-        <div class="event-card">
-
-          <b>${e.title}</b><br>
-          📅 ${e.date}<br>
-          🕒 ${e.start} - ${e.end}
-
-          <button onclick="setAttendance('${docSnap.id}', true)">✔️ Je participe</button>
-          <button onclick="setAttendance('${docSnap.id}', false)">❌ Absent</button>
-
-          <div class="yes">✔️ ${yes.join(", ") || "-"}</div>
-          <div class="no">❌ ${no.join(", ") || "-"}</div>
-
-        </div>
-      `;
-    });
-
-    document.getElementById("eventsList").innerHTML =
-      html || "Aucun event";
-  });
-}
-
-/* RSVP */
-window.setAttendance = async (id, status) => {
+/* LOAD */
+async function loadAll() {
 
   const snap = await getDocs(collection(db, "events"));
 
-  let data;
+  let arr = [];
 
   snap.forEach(d => {
-    if (d.id === id) data = d.data();
+    const data = d.data();
+
+    arr.push({
+      id: d.id,
+      title: `🎮 ${data.title}`,
+      start: data.date,
+      extendedProps: data
+    });
   });
 
-  data.participants[currentPlayer] = status;
+  return arr;
+}
 
-  await deleteDoc(doc(db, "events", id));
-  await addDoc(collection(db, "events"), data);
-};
-
-/* CREATE EVENT */
+/* SAVE EVENT (ONLY Tikafx) */
 async function saveEvent() {
+
+  if (currentPlayer !== "Tikafx") {
+    alert("Seul Tikafx peut créer un event");
+    return;
+  }
 
   await addDoc(collection(db, "events"), {
     title: document.getElementById("eventTitle").value,
@@ -168,7 +104,48 @@ async function saveEvent() {
     participants: {}
   });
 
+  refresh();
   closeEventModal();
+}
+
+/* RSVP */
+async function setAttendance(status) {
+
+  const snap = await getDocs(collection(db, "events"));
+
+  let targetId = null;
+  let data = null;
+
+  snap.forEach(d => {
+    if (d.id === selectedEvent.id) {
+      targetId = d.id;
+      data = d.data();
+    }
+  });
+
+  if (!data.participants) data.participants = {};
+
+  data.participants[currentPlayer] = status;
+
+  await updateDoc(doc(db, "events", targetId), data);
+
+  renderParticipants(selectedEvent);
+}
+
+/* DISPLAY PARTICIPANTS */
+function renderParticipants(event) {
+
+  const box = document.getElementById("participantsList");
+
+  const p = event.extendedProps.participants || {};
+
+  let html = "";
+
+  Object.keys(p).forEach(name => {
+    html += `<div>${name} : ${p[name] ? "Présent" : "Absent"}</div>`;
+  });
+
+  box.innerHTML = html;
 }
 
 /* AVAIL */
@@ -181,40 +158,49 @@ async function saveAvailability() {
     end: document.getElementById("endHour").value
   });
 
+  refresh();
   closeAvailModal();
 }
 
-/* LOAD CALENDAR */
-async function loadAll() {
+/* UI */
+function updateUI() {
+  document.getElementById("playerText").textContent =
+    currentPlayer ? `Connecté : ${currentPlayer}` : "";
+}
 
-  const snap = await getDocs(collection(db, "availabilities"));
+/* REFRESH */
+async function refresh() {
+  const events = await loadAll();
+  calendar.removeAllEvents();
+  events.forEach(e => calendar.addEvent(e));
 
-  let events = [];
+  refreshSidebar();
+}
+
+/* SIDEBAR */
+async function refreshSidebar() {
+
+  const snap = await getDocs(collection(db, "events"));
+
+  let html = "";
 
   snap.forEach(d => {
     const e = d.data();
-
-    events.push({
-      title: `${e.player} (${e.start}-${e.end})`,
-      start: e.date
-    });
+    html += `<div><b>${e.title}</b></div>`;
   });
 
-  return events;
-}
-
-/* WEEK */
-function renderWeek() {
-  const c = document.getElementById("weekDays");
-  c.innerHTML = "";
-}
-
-/* PLAYERS */
-function renderPlayersForDay() {
-  document.getElementById("playersList").innerHTML = "";
+  document.getElementById("eventList").innerHTML = html;
 }
 
 /* MODALS */
+function openEventModal() {
+  document.getElementById("eventModal").classList.remove("hidden");
+}
+
+function closeEventModal() {
+  document.getElementById("eventModal").classList.add("hidden");
+}
+
 function openAvailModal() {
   document.getElementById("availModal").classList.remove("hidden");
 }
@@ -223,6 +209,10 @@ function closeAvailModal() {
   document.getElementById("availModal").classList.add("hidden");
 }
 
-function closeEventModal() {
-  document.getElementById("eventModal").classList.add("hidden");
+function openUsernameModal() {
+  document.getElementById("usernameModal").classList.remove("hidden");
+}
+
+function closeUsernameModal() {
+  document.getElementById("usernameModal").classList.add("hidden");
 }
