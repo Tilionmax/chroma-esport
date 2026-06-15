@@ -16,58 +16,43 @@
 
   <h1>CHROMA ESPORT<br>Planning Equipe EVA</h1>
 
-  <!-- LAYOUT AJOUTÉ -->
-  <div class="layout">
-
-    <!-- LEFT COLUMN -->
-    <div class="left-panel">
-
-      <div id="currenteventDisplay">
-        <button id="createEventBtn" class="edit-btn">➕ Créer event</button>
-      </div>
-
-      <h3>📌 Events</h3>
-      <div id="eventList"></div>
-
-      <h3>👥 Participants</h3>
-
-      <button id="attendBtn">Je participe</button>
-      <button id="absentBtn">Je suis absent</button>
-
-      <div id="participantsList"></div>
-
-    </div>
-
-    <!-- RIGHT -->
-    <div class="right-panel">
-
-      <div id="currentPlayerDisplay">
-        <button id="changePlayerBtn" class="edit-btn">✏️Modifier Pseudo</button>
-        <span id="playerText"></span>
-      </div>
-
-      <div id="calendar"></div>
-
-      <div class="week-bar">
-        <div id="weekRange"></div>
-        <div id="weekDays"></div>
-      </div>
-
-      <div class="stats">
-        <h3>🟢 Joueur Disponible</h3>
-        <div id="playersList">Clique sur un jour</div>
-      </div>
-
-    </div>
-
+  <!-- event creer -->
+  <div id="currenteventDisplay">
+    <button id="createEventBtn" class="edit-btn">➕ Créer event</button>
   </div>
+
+  <!-- USER DISPLAY -->
+  <div id="currentPlayerDisplay">
+    <button id="changePlayerBtn" class="edit-btn">✏️Modifier Pseudo</button>
+    <span id="playerText"></span>
+  </div>
+
+  <!-- CALENDAR -->
+  <div id="calendar"></div>
+
+  <!-- WEEK -->
+  <div class="week-bar">
+    <div id="weekRange"></div>
+    <div id="weekDays"></div>
+  </div>
+
+  <!-- PLAYERS -->
+  <div class="stats">
+    <h3>🟢 Joueur Disponible</h3>
+    <div id="playersList">Clique sur un jour</div>
+  </div>
+
 </div>
 
-<!-- MODALS (INCHANGÉS) -->
-<div id="availModal" class="modal hidden">
-  <div class="modal-content">
+<!-- ADD MODAL -->
+<div id="availModal" class="modal hidden" onclick="closeAddBackdrop(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
 
     <h3>Ajouter une disponibilité</h3>
+
+    <p style="color:#020f2a; margin-bottom:10px;font-weight: bold;">
+      Connecté en tant que : <span id="modalPlayerName"></span>
+    </p>
 
     <input id="startHour" placeholder="Début ex: 18h00">
     <input id="endHour" placeholder="Fin ex: 21h30">
@@ -78,15 +63,16 @@
   </div>
 </div>
 
-<div id="editModal" class="modal hidden">
-  <div class="modal-content">
+<!-- EDIT MODAL -->
+<div id="editModal" class="modal hidden" onclick="closeEditBackdrop(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
 
     <h3>Gérer la disponibilité</h3>
 
     <p id="editInfo"></p>
 
-    <input id="editStart">
-    <input id="editEnd">
+    <input id="editStart" placeholder="Début ex: 18h00">
+    <input id="editEnd" placeholder="Fin ex: 21h30">
 
     <button id="updateBtn">Modifier</button>
     <button id="deleteBtn">Supprimer</button>
@@ -95,11 +81,17 @@
   </div>
 </div>
 
-<div id="usernameModal" class="modal hidden">
-  <div class="modal-content">
+<!-- USERNAME MODAL -->
+<div id="usernameModal" class="modal hidden" onclick="closeUsernameBackdrop(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
 
-    <h3>Pseudo</h3>
-    <input id="usernameInput">
+    <h3>Bienvenue chez Chroma Esport</h3>
+
+    <p style="color:#020f2a;font-weight:bold;">
+      Veuillez saisir votre Pseudo Discord avant d'ajouter vos disponibilités.
+    </p>
+
+    <input id="usernameInput" placeholder="Pseudo">
 
     <button id="saveUsernameBtn">Sauvegarder</button>
     <button id="closeUsernameBtn">Fermer</button>
@@ -107,15 +99,16 @@
   </div>
 </div>
 
-<div id="eventModal" class="modal hidden">
-  <div class="modal-content">
+<!-- EVENT MODAL (NEW) -->
+<div id="eventModal" class="modal hidden" onclick="closeEventBackdrop(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
 
-    <h3>Créer event</h3>
+    <h3>Créer un event</h3>
 
-    <input id="eventTitle">
+    <input id="eventTitle" placeholder="Nom de l'event">
     <input id="eventDate" type="date">
-    <input id="eventStart">
-    <input id="eventEnd">
+    <input id="eventStart" placeholder="Début ex: 18h00">
+    <input id="eventEnd" placeholder="Fin ex: 21h00">
 
     <button id="saveEventBtn">Créer</button>
     <button id="closeEventBtn">Fermer</button>
