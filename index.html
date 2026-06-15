@@ -18,36 +18,35 @@
 
   <div class="layout">
 
-    <!-- EVENTS PANEL (GAUCHE) -->
-    <div id="eventsPanel">
-      <h3>🎮 Events</h3>
-      <div id="eventsList">Chargement...</div>
+    <!-- LEFT COLUMN EVENTS -->
+    <div class="event-panel">
+      <button id="createEventBtn" class="edit-btn">➕ Créer event</button>
+
+      <h3>📌 Events</h3>
+      <div id="eventList"></div>
+
+      <h3>🟢 Participants</h3>
+      <button id="attendBtn">Je participe</button>
+      <button id="absentBtn">Je suis absent</button>
+
+      <div id="participantsList"></div>
     </div>
 
-    <!-- CENTER -->
-    <div class="center">
+    <!-- RIGHT CALENDAR -->
+    <div class="calendar-panel">
 
-      <!-- CREATE EVENT (ADMIN ONLY) -->
-      <div id="currenteventDisplay">
-        <button id="createEventBtn" class="edit-btn">➕ Créer event</button>
-      </div>
-
-      <!-- USER -->
       <div id="currentPlayerDisplay">
         <button id="changePlayerBtn" class="edit-btn">✏️Modifier Pseudo</button>
         <span id="playerText"></span>
       </div>
 
-      <!-- CALENDAR -->
       <div id="calendar"></div>
 
-      <!-- WEEK -->
       <div class="week-bar">
         <div id="weekRange"></div>
         <div id="weekDays"></div>
       </div>
 
-      <!-- PLAYERS -->
       <div class="stats">
         <h3>🟢 Joueur Disponible</h3>
         <div id="playersList">Clique sur un jour</div>
@@ -60,17 +59,15 @@
 <!-- AVAIL MODAL -->
 <div id="availModal" class="modal hidden">
   <div class="modal-content">
-    <h3>Ajouter une disponibilité</h3>
 
-    <p style="color:#020f2a;font-weight:bold;">
-      Connecté : <span id="modalPlayerName"></span>
-    </p>
+    <h3>Ajouter une disponibilité</h3>
 
     <input id="startHour" placeholder="Début ex: 18h00">
     <input id="endHour" placeholder="Fin ex: 21h30">
 
     <button id="saveAvailBtn">Sauvegarder</button>
     <button id="closeAvailBtn">Fermer</button>
+
   </div>
 </div>
 
@@ -78,9 +75,8 @@
 <div id="usernameModal" class="modal hidden">
   <div class="modal-content">
 
-    <h3>Bienvenue</h3>
-
-    <input id="usernameInput" placeholder="Pseudo Discord">
+    <h3>Pseudo Discord</h3>
+    <input id="usernameInput" placeholder="Pseudo">
 
     <button id="saveUsernameBtn">Sauvegarder</button>
     <button id="closeUsernameBtn">Fermer</button>
