@@ -255,12 +255,13 @@ button:hover {
 }
 
 #createEventBtn {
-  background: #0b1a3a !important;
+  background: #ffffff !important;
+  color: #010c2c;
   width: 199.4px;
 }
 
 #createEventBtn:hover {
-  background: #ffffff !important;
+  background: ##ffa83b !important;
   border: none !important;
   cursor: pointer !important;
   color: #000000 !important;
