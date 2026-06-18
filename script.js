@@ -149,6 +149,9 @@ async function loadAll() {
       id: d.id,
       title: `${data.player} (${data.start}-${data.end})`,
       start: data.date,
+      backgroundColor: "#3c9195",   // 👈 couleur joueurs
+      borderColor: "#3c9195",
+      textColor: "#ffffff",
       extendedProps: { ...data, type: "avail" }
     });
   });
@@ -160,6 +163,9 @@ async function loadAll() {
       id: d.id,
       title: `🎮 ${data.title} (${data.start}-${data.end})`,
       start: data.date,
+      backgroundColor: "#ff3b3b",   // 👈 couleur events
+      borderColor: "#ff3b3b",
+      textColor: "#ffffff",
       extendedProps: { ...data, type: "event", participants: data.participants || {} }
     });
   });
