@@ -86,7 +86,7 @@ h1 {
   text-align: center;
 }
 
-.playersList.player-card {
+#playersList .player-card {
   background: #3c9195;
   padding: 10px;
   margin: 5px 0;
@@ -99,7 +99,7 @@ h1 {
   text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
 }
 
-.eventsList.player-card{
+#eventsList .player-card{
 background: #3c9195;
     padding: 10px;
     margin: 5px 0;
