@@ -225,9 +225,7 @@ button:hover {
 }
 
 .fc-h-event {
-  background-color: #010c2c;
-  border: 1px solid #010c2c;
-  display: block;
+  border: 5px solid #010c2c;
 }
 
 /* Bouton edit username */
