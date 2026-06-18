@@ -267,3 +267,15 @@ button:hover {
   font-weight: bold !important;
   font-size: 16px !important;
 }
+.fc-daygrid-event {
+  white-space: normal !important;
+}
+
+.fc-event-title {
+  white-space: normal !important;
+  overflow: visible !important;
+}
+
+.fc-daygrid-event-harness {
+  overflow: visible !important;
+}
