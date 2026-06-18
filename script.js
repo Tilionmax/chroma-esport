@@ -90,6 +90,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("eventEnd").value =
         info.event.extendedProps.end;
 
+      document.getElementById("saveEventBtn").classList.add("hidden");
+
+      document.getElementById("updateEventBtn").classList.remove("hidden");
+      document.getElementById("deleteEventBtn").classList.remove("hidden"); 
+
       document.getElementById("eventModal").classList.remove("hidden");
       }
       
@@ -418,6 +423,19 @@ function closeAvailModal() {
 }
 
 function openEventModal() {
+
+  selectedCalendarEvent = null;
+
+  document.getElementById("eventTitle").value = "";
+  document.getElementById("eventDate").value = "";
+  document.getElementById("eventStart").value = "";
+  document.getElementById("eventEnd").value = "";
+
+  document.getElementById("saveEventBtn").classList.remove("hidden");
+
+  document.getElementById("updateEventBtn").classList.add("hidden");
+  document.getElementById("deleteEventBtn").classList.add("hidden");
+
   document.getElementById("eventModal").classList.remove("hidden");
 }
 
