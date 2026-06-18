@@ -86,7 +86,7 @@ h1 {
   text-align: center;
 }
 
-.player-card {
+#playersList.player-card {
   background: #3c9195;
   padding: 10px;
   margin: 5px 0;
