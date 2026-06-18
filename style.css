@@ -81,11 +81,9 @@ h1 {
   flex-direction: row;
   flex-wrap: wrap;
   align-content: stretch;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-evenly;
   text-align: center;
-  margin-left: 275px;
-  margin-right: 275px;
 }
 
 .player-card {
