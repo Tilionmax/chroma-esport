@@ -163,9 +163,9 @@ async function loadAll() {
       id: d.id,
       title: `🎮 ${data.title} (${data.start}-${data.end})`,
       start: data.date,
-      backgroundColor: "#ff3b3b",   // 👈 couleur events
-      borderColor: "#ff3b3b",
-      textColor: "#ffffff",
+      backgroundColor: "#ffa83b",   // 👈 couleur events
+      borderColor: "#ffa83b",
+      textColor: "#000000",
       extendedProps: { ...data, type: "event", participants: data.participants || {} }
     });
   });
