@@ -117,6 +117,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("saveEventBtn").addEventListener("click", saveEvent);
   document.getElementById("closeEventBtn").addEventListener("click", closeEventModal);
 
+  document.getElementById("updateEventBtn").addEventListener("click", updateCalendarEvent);
+  document.getElementById("deleteEventBtn").addEventListener("click", deleteCalendarEvent);
+
   updateUI();
   renderWeek();
   renderPlayersForDay();
@@ -150,6 +153,45 @@ function saveUsername() {
 
   updateUI();
   closeUsernameModal();
+}
+
+/* ajout fonction modifier event */
+async function updateCalendarEvent() {
+
+  if (!selectedCalendarEvent) return;
+
+  await deleteDoc(
+    doc(db, "events", selectedCalendarEvent.id)
+  );
+
+  await addDoc(collection(db, "events"), {
+
+    title: document.getElementById("eventTitle").value,
+
+    date: document.getElementById("eventDate").value,
+
+    start: document.getElementById("eventStart").value,
+
+    end: document.getElementById("eventEnd").value,
+
+    participants:
+      selectedCalendarEvent.extendedProps.participants || {}
+  });
+
+  refresh();
+  closeEventModal();
+}
+/* ajout fonction supprimer event */
+async function deleteCalendarEvent() {
+
+  if (!selectedCalendarEvent) return;
+
+  await deleteDoc(
+    doc(db, "events", selectedCalendarEvent.id)
+  );
+
+  refresh();
+  closeEventModal();
 }
 
 /* LOAD */
