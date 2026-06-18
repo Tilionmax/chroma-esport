@@ -288,6 +288,7 @@ function renderWeek() {
     div.onclick = () => {
       selectedDay = iso;
       renderPlayersForDay();
+      renderEventsForDay();
     };
 
     container.appendChild(div);
@@ -313,6 +314,31 @@ async function renderPlayersForDay() {
       <span>${p.start} - ${p.end}</span>
     </div>
   `).join("");
+}
+/* events */
+async function renderEventsForDay() {
+
+  const list = document.getElementById("eventsList");
+  const snap = await getDocs(collection(db, "events"));
+
+  let arr = [];
+
+  snap.forEach(d => {
+    const data = d.data();
+
+    if (data.date === selectedDay) {
+      arr.push(data);
+    }
+  });
+
+  list.innerHTML = arr.length
+    ? arr.map(e => `
+        <div class="player-card">
+          <span>${e.title}</span>
+          <span>${e.start} - ${e.end}</span>
+        </div>
+      `).join("")
+    : "Aucun event";
 }
 
 /* MODALS */
