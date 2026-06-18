@@ -226,6 +226,8 @@ button:hover {
 
 .fc-h-event {
   border: 5px solid #010c2c;
+  font-weight: 700;
+  font-size: 16px;
 }
 
 /* Bouton edit username */
