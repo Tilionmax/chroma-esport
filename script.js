@@ -102,6 +102,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   updateUI();
   renderWeek();
   renderPlayersForDay();
+  renderEventsForDay();
 
   if (!currentPlayer) openUsernameModal();
 });
