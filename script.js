@@ -26,6 +26,7 @@ let calendar;
 let selectedDate = null;
 let selectedDay = new Date().toISOString().split("T")[0];
 let selectedEvent = null;
+let selectedCalendarEvent = null;
 
 let currentPlayer = localStorage.getItem("playerName") || "";
 
@@ -74,8 +75,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     eventClick: (info) => {
       if (info.event.extendedProps.type === "event") {
-        openEventModal(info.event);
-      } else {
+
+      selectedCalendarEvent = info.event;
+
+      document.getElementById("eventTitle").value =
+        info.event.extendedProps.title;
+
+      document.getElementById("eventDate").value =
+        info.event.extendedProps.date;
+
+      document.getElementById("eventStart").value =
+        info.event.extendedProps.start;
+
+      document.getElementById("eventEnd").value =
+        info.event.extendedProps.end;
+
+      document.getElementById("eventModal").classList.remove("hidden");
+      }
+      
+      else {
         openEditModal(info.event);
       }
     }
